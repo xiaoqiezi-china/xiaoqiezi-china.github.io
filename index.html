@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
 <head>
 	<meta charset="utf-8">
 	<title>Myboke</title>
 	<link rel="stylesheet" href="template">
 </head>
-<h1 >欢迎来到我的博客</h1>
-<h1>支持俄罗斯！反对乌克兰纳粹！</h1>
-<button onclick="window.open('www.bilibili.com')">Bilibili</button>
+<script>
+    function js1 (){
+        var x=document.getElementById("demo1").value
+        alert("已运行JS点击确定继续");
+        alert(x);
+        console.log(x +" 测试!");
+    }
+</script>
+<style>
+    button{
+        margin-left: 50%;
+    }
+</style>
+<h1 style="background-color:red;margin-left: 50%;width: 300px;">欢迎来到我的博客</h1>
+<h1></h1>
+<button style="margin-left: 50%" onclick="window.open('http://www.bilibili.com')">Bilibili</button>
+<button onclick="js1()">测试1:alert</button> <input id="demo1">
 </html>
