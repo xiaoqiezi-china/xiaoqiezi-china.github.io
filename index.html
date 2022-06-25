@@ -2,7 +2,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Myboke</title>
-	<link rel="stylesheet" href="template">
+	<link rel="css/index.css" href="template">
 </head>
 <script>
     function js1 (){
@@ -10,6 +10,18 @@
         alert("已运行JS点击确定继续");
         alert(x);
         console.log(x +" 测试!");
+    }
+</script>
+<!--JS-->
+<script>
+    function js2(){
+        var jieguo=Math.random()*10000000000000000;
+        alert(jieguo);
+    }
+    function jiafa(id_1,id_2){
+        var inputA=document.getElementById(id_1);
+        var inputB=document.getElementById(id_2);
+        alert(parseInt(inputA.value)+parseInt(inputB.value));
     }
 </script>
 <style>
@@ -21,4 +33,12 @@
 <h1></h1>
 <button style="margin-left: 50%" onclick="window.open('http://www.bilibili.com')">Bilibili</button>
 <button onclick="js1()">测试1:alert</button> <input id="demo1">
+<button style="margin-left: 50%;" onclick="window.open('xzz.html')">下载站</button>
+<button onclick="js2()">取随机数</button>
+<button onclick="jiafa('ceshi1','ceshi2')">加法运算</button><input id="ceshi1"><input id="ceshi2">
 </html>
+
+
+
+
+
