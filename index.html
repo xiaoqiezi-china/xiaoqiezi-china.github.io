@@ -5,102 +5,10 @@
         <meta name="author" content="MC_xiaoqie">
     </head>
     <body style="background-color: black;">
-        
-        <h1 id="h1" onclick="Aonclick()">新年倒计时</h1>
-    <h3 id="h3">13日0时0分0秒</h3>
+        <h1 style="text-algin:center;color:white">
+            小茄Github站点...这里没有什么东西，访问xiaoqie.site
+        </h1>
     </body>
 
 </html>
-<style>
-    #h1{
-
-        color:white;
-        text-align: center;
-        margin-top: 40vh;
-        font-size: 100;
-        font-size: 10vh;
-        animation: yidong2 1s;
-        transition: margin-top 1s, color 1s;
-    }
-    #h1:hover
-    {
-        margin-top: 36vh;
-        color:rgb(204, 132, 132)
-    }
-    #h3
-    {
-        color:white;
-        text-align: center;
-        font-size: 3vh;
-    
-    }
-
-</style>
-<script>
-setInterval(function(){get()},100)
-panduan=0
-function get(){
-    if (panduan==0)
-    {
-        getLeft();
-    }
-    else
-    {
-        getChunJie();
-    }
-}
-function Aonclick(){
-    if(panduan==0)
-    {
-       panduan=1;
-       document.getElementById("h3").style="color:rgb(204, 132, 132)"
-       document.getElementById("h1").innerText="春节倒计时"
-    }
-    else
-    {
-       panduan=0;
-       document.getElementById("h1").style="color:white"
-       document.getElementById("h1").innerText="新年倒计时"
-    }
-}
-
-function getLeft()
-{
-    var futute=new Date ("Jan1,2024 00:00:00").getTime();
-    var now=new Date().getTime()
-    var left=futute-now
-    var second=1000
-    var minute=second*60
-    var hour=minute*60
-    var day=hour*24
-    var month=day*30
-    var leftsecond=Math.floor(left%(minute)/second)
-    var leftminute=Math.floor(left%(hour)/minute)
-    var lefthour=Math.floor(left%(day)/hour)
-    var leftday=Math.floor(left/day)
-    var leftmonth=Math.floor(left/month)
-    var text=leftmonth+"月"+leftday+"日"+lefthour+"时"+leftminute+"分"+leftsecond+"秒"
-    document.getElementById("h3").innerText=text
-}
-function getChunJie(){
-    var futute=new Date ("Feb10,2024 00:00:00").getTime();
-    var now=new Date().getTime()
-    var left=futute-now
-    var second=1000
-    var minute=second*60
-    var hour=minute*60
-    var day=hour*24
-    var month=day*30
-    var leftsecond=Math.floor(left%(minute)/second)
-    var leftminute=Math.floor(left%(hour)/minute)
-    var lefthour=Math.floor(left%(day)/hour)
-    var leftday=Math.floor(left/day)
-    var leftmonth=Math.floor(left/month)
-    var text=leftmonth+"月"+leftday+"日"+lefthour+"时"+leftminute+"分"+leftsecond+"秒"
-    document.getElementById("h3").innerText=text
-}
-</script>
-
-
-
 
