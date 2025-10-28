@@ -1,0 +1,41 @@
+.head-img{
+    width: 10rem;
+    height: 10rem;
+    border-radius: 100rem;
+
+}
+.card-head{
+    text-align: center;
+    height: 10rem;
+    width: 10rem;
+    margin:auto;
+    padding: 2rem;
+    box-shadow: 2px 2px 2px 2px #888888;
+    border-radius: 2rem;
+    transition: all ease-in-out 0.2s;
+}
+.card-head:hover{
+    transform:rotate(20deg) 
+}
+.card-for-page{
+    margin: 5rem;
+    border-radius: 2rem;
+    width: 10vw;
+    padding: 2rem;
+    text-align: center;
+    height:20vh;
+    box-shadow: 2px 2px 2px 2px #888888;
+    margin-top: 10rem;
+    transition: all ease-in-out 0.2s;
+}
+.page-icon{
+    border-radius: 100rem;
+    width: 4rem;
+    height:4rem;
+
+}
+.card-for-page:hover{
+    transform: translateY(-5vh);
+    box-shadow: 2px 2px 10px 2px #888888;
+    background-color: aliceblue;
+}
