@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft 物品组件生成器 | Item Component Builder</title>
+<style>
+/* ================================================================
+   MINECRAFT-STYLE UI — Inspired by minecraft.net & in-game UI
+   ================================================================ */
+:root {
+  /* Minecraft Official Color Palette — from minecraft.net */
+  --mc-green: #52a535;
+  --mc-green-hover: #6cc349;
+  --mc-green-dark: #3c8527;
+  --mc-green-glow: rgba(82,165,53,.35);
+  --mc-dirt: #66412c;
+  --mc-dirt-dark: #492d1f;
+  --mc-stone: #aba09c;
+  --mc-stone-dark: #6b6562;
+  --mc-stone-bg: #171615;
+  --mc-text: #fcf5f1;
+  --mc-text-light: #fff;
+  --mc-text-dim: #aba09c;
+  --mc-text-dark: #6b6562;
+  --mc-wood: #805539;
+  --mc-wood-light: #976746;
+  --mc-wood-dark: #66412c;
+  --mc-panel: #262423;
+  --mc-panel-hover: #3d3938;
+  --mc-border: #3d3938;
+  --mc-border-light: #6b6562;
+  --mc-danger: #a83232;
+  --mc-danger-hover: #c94444;
+  --mc-info: #2a6b9b;
+  --font-mc: 'Minecraft AE Pixel','Minecraft AE',monospace;
+  --font-body: 'Minecraft AE Pixel','Minecraft AE',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;overflow:hidden}body{height:100%;margin:0}
+body{
+  font-family:var(--font-body);background:var(--mc-stone-bg);color:var(--mc-text);user-select:none;
+  display:flex;flex-direction:column;
+}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--mc-stone-bg);border-left:1px solid var(--mc-border)}
+::-webkit-scrollbar-thumb{background:var(--mc-stone-dark);border:1px solid var(--mc-border);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--mc-stone)}
+
+/* HEADER — Grass Block */
+.header{
+  height:52px;background:var(--mc-green);
+  border-bottom:4px solid #3D5A0E;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  position:relative;z-index:10;box-shadow:0 2px 12px rgba(0,0,0,.6);
+}
+.header::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;height:4px;
+  background:repeating-linear-gradient(90deg,#3A2210 0px,#3A2210 4px,#5C3A1E 4px,#5C3A1E 8px);
+}
+.header-title{display:flex;align-items:center;gap:10px}
+.header-icon{
+  width:32px;height:32px;background:var(--mc-wood-dark);
+  border:2px solid #4A3018;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.3);
+}
+.header-title h1{font-family:var(--font-mc);font-size:11px;color:var(--mc-text-light);text-shadow:2px 2px 0 rgba(0,0,0,.5);letter-spacing:.5px}
+.header-title .subtitle{font-size:9px;color:rgba(255,255,255,.55);font-family:var(--font-mc);letter-spacing:.5px}
+.header-badge{
+  background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.15);
+  padding:3px 10px;border-radius:3px;font-family:var(--font-mc);
+  font-size:9px;color:var(--mc-text-light);text-shadow:1px 1px 0 rgba(0,0,0,.4);letter-spacing:.5px;
+}
+
+/* LAYOUT */
+.main-container{display:flex;flex:1;overflow:hidden;gap:2px;background:var(--mc-stone-bg);position:relative}
+
+/* PANEL BASE */
+.panel{display:flex;flex-direction:column;background:var(--mc-panel);border:1px solid var(--mc-border);position:relative}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:rgba(255,255,255,.06)}
+.panel-header{
+  padding:7px 12px;background:var(--mc-panel-hover);border-bottom:2px solid #111;
+  font-family:var(--font-mc);font-size:8.5px;color:var(--mc-text);
+  display:flex;align-items:center;gap:7px;flex-shrink:0;letter-spacing:.5px;text-shadow:1px 1px 0 rgba(0,0,0,.4);
+}
+.panel-header .icon{font-size:13px}
+.panel-body{flex:1;overflow:hidden;position:relative}
+
+/* PALETTE */
+.palette-panel{width:230px;min-width:230px}
+.palette-panel .panel-header{border-top:1px solid var(--mc-green)}
+.palette-tabs{display:flex;flex-wrap:wrap;gap:2px;padding:6px 6px 4px;background:#1A1A1A;border-bottom:1px solid var(--mc-border)}
+.palette-tab{
+  padding:3px 7px;font-size:9px;cursor:pointer;border:1px solid var(--mc-border);
+  background:var(--mc-panel);color:var(--mc-text-dim);transition:all .15s;font-family:var(--font-body);border-radius:2px;
+}
+.palette-tab:hover{background:var(--mc-panel-hover);color:var(--mc-text);border-color:var(--mc-border-light)}
+.palette-tab.active{background:var(--mc-green);color:#fff;border-color:var(--mc-green-dark);text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.palette-scroll{height:100%;overflow-y:auto;padding:6px}
+
+.palette-item{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;margin-bottom:3px;
+  border-radius:3px;cursor:grab;border:1px solid transparent;transition:all .15s;font-size:12px;
+  background:rgba(255,255,255,.03);
+}
+.palette-item:hover{border-color:var(--mc-border-light);background:rgba(255,255,255,.07)}
+.palette-item:active{cursor:grabbing}
+.palette-item .item-icon{font-size:16px;width:24px;text-align:center;flex-shrink:0}
+.palette-item .item-name{flex:1;font-size:12px;color:var(--mc-text)}
+.palette-item .plus-btn{
+  width:20px;height:20px;border:1px solid var(--mc-border);background:rgba(0,0,0,.3);
+  color:var(--mc-text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:13px;border-radius:2px;transition:all .15s;flex-shrink:0;
+}
+.palette-item .plus-btn:hover{background:var(--mc-green);color:#fff;border-color:var(--mc-green-dark)}
+
+/* WORKSPACE */
+.workspace-panel{flex:1;min-width:280px;min-height:0}
+.workspace-panel .panel-header{border-top:1px solid var(--mc-wood)}
+.workspace-toolbar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#1A1A1A;border-bottom:1px solid var(--mc-border);flex-shrink:0}
+.workspace-toolbar .block-count{font-size:10px;color:var(--mc-text-dim);margin-right:auto}
+.workspace-area{flex:1;overflow-y:auto;padding:12px;min-height:0}
+
+/* MC Buttons */
+.mc-btn{font-family:var(--font-body);font-size:10px;cursor:pointer;border:none;padding:4px 10px;color:var(--mc-text-light);border-radius:2px;transition:all .1s;position:relative;text-shadow:1px 1px 0 rgba(0,0,0,.3);display:inline-flex;align-items:center;gap:4px}
+.mc-btn:active{transform:translateY(1px)}
+.mc-btn-green{background:var(--mc-green);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 0 var(--mc-green-dark)}
+.mc-btn-green:hover{background:var(--mc-green-dark)}
+.mc-btn-danger{background:var(--mc-danger);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 0 #7A2020}
+.mc-btn-danger:hover{background:var(--mc-danger-hover)}
+.mc-btn-ghost{background:var(--mc-panel-hover);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 2px 0 #1A1A1A}
+.mc-btn-ghost:hover{background:var(--mc-border)}
+
+/* Empty state */
+.workspace-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;gap:10px;padding:20px}
+.workspace-empty .big-icon{font-size:42px;opacity:.3}
+.workspace-empty p{font-size:13px;color:var(--mc-text-dim);line-height:1.6}
+.workspace-empty .hint{font-size:10px;color:var(--mc-text-dark)}
+
+/* OUTPUT */
+.output-panel{width:380px;min-width:320px;min-height:0;overflow:hidden}
+.output-panel .panel-header{border-top:1px solid var(--mc-info)}
+.output-tabs{display:flex;gap:1px}
+.output-tab{padding:4px 10px;font-size:9px;cursor:pointer;background:#1A1A1A;color:var(--mc-text-dim);border:1px solid var(--mc-border);border-bottom:none;transition:all .15s;font-family:var(--font-body);border-radius:2px 2px 0 0;margin-top:2px}
+.output-tab:hover{background:var(--mc-panel-hover);color:var(--mc-text)}
+.output-tab.active{background:var(--mc-panel);color:var(--mc-green-hover);border-color:var(--mc-border-light);font-weight:bold}
+.output-content{flex:1;overflow:auto;position:relative;min-height:0}
+.output-content pre{margin:0;padding:14px;font-size:11px;font-family:var(--font-mc);color:var(--mc-text);line-height:1.5;white-space:pre-wrap;word-break:break-all;min-height:100%}
+.output-content .placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--mc-text-dark);text-align:center;gap:8px;padding:20px}
+.output-content .placeholder .icon{font-size:28px;opacity:.3}
+.output-content .placeholder p{font-size:12px}
+.output-actions{padding:6px 10px;background:#1A1A1A;border-top:1px solid var(--mc-border);display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center}.output-char-count{font-size:9px;color:var(--mc-text-dark);margin-left:auto}
+.output-error{color:#E74C3C;padding:10px 14px;font-size:11px;background:rgba(231,76,60,.08);border-left:3px solid #E74C3C;margin:6px;border-radius:2px;display:none}
+
+/* BASE ITEM BLOCK */
+.block-base-item{background:#2A1F14;border:2px solid var(--mc-wood-dark);border-radius:4px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06)}
+.block-base-item .block-header{background:var(--mc-dirt);padding:6px 12px;display:flex;align-items:center;gap:8px;border-bottom:2px solid #2D1A0A;font-size:11px;color:var(--mc-text-light);font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,.4);font-family:var(--font-mc);font-size:8.5px;letter-spacing:.5px}
+.block-base-item .block-header .icon{font-size:16px}
+.block-base-item .block-body{padding:10px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.block-base-item .block-body label{font-size:10px;color:var(--mc-text-dim);min-width:36px;font-family:var(--font-mc);letter-spacing:.3px}
+.block-base-item select,.block-base-item input{background:#14100A;color:var(--mc-text);border:1px solid var(--mc-wood-dark);padding:4px 8px;border-radius:2px;font-size:11px;font-family:var(--font-body)}
+.block-base-item select{min-width:160px}
+.block-base-item input[type=number]{width:55px}
+.block-base-item .cmd-options{margin-top:6px;padding-top:6px;border-top:1px solid var(--mc-wood-dark);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.block-base-item .cmd-options label{font-size:10px;color:var(--mc-text-dim)}
+
+/* COMPONENT BLOCKS */
+.component-block{background:#282828;border:2px solid #3A3A3A;border-radius:4px;overflow:hidden;margin-bottom:6px;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05)}
+.component-block:hover{border-color:#555}.component-block.disabled{opacity:.45}.component-block.disabled .block-body{display:none}
+.component-block .block-header{padding:5px 10px;display:flex;align-items:center;gap:6px;cursor:move;user-select:none;font-size:11px;font-weight:bold;color:var(--mc-text-light);border-bottom:1px solid rgba(0,0,0,.3);text-shadow:1px 1px 0 rgba(0,0,0,.4);position:relative}
+.component-block .block-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(255,255,255,.06)}
+.component-block .block-header .drag-handle{font-size:13px;opacity:.4;cursor:grab;width:16px;text-align:center;letter-spacing:-2px}
+.component-block .block-header .drag-handle:active{cursor:grabbing}
+.component-block .block-header .block-icon{font-size:14px}
+.component-block .block-header .block-name{flex:1;font-size:11px}
+.component-block .block-header .block-controls{display:flex;gap:3px}
+.component-block .block-header .ctrl-btn{width:20px;height:20px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:rgba(255,255,255,.55);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s;border-radius:2px}
+.component-block .block-header .ctrl-btn:hover{background:rgba(255,255,255,.1);color:var(--mc-text)}
+.component-block .block-header .ctrl-btn.del:hover{background:var(--mc-danger);color:#fff;border-color:#7A2020}
+.component-block .block-header .ctrl-btn.toggle.active{background:var(--mc-green);color:#fff;border-color:var(--mc-green-dark)}
+.component-block .block-body{padding:10px 12px;font-size:11px}
+
+/* FORM ELEMENTS */
+.field-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.field-row label{font-size:10px;color:var(--mc-text-dim);min-width:44px;font-family:var(--font-mc);letter-spacing:.3px}
+.block-body input[type=text],.block-body input[type=number],.block-body textarea,.block-body select{background:#141414;color:var(--mc-text);border:1px solid #3A3A3A;border-radius:2px;padding:4px 7px;font-size:11px;font-family:var(--font-body);transition:border-color .2s}
+.block-body input:focus,.block-body textarea:focus,.block-body select:focus{border-color:var(--mc-green);outline:none;box-shadow:0 0 6px var(--mc-green-glow)}
+.block-body textarea{resize:vertical;min-height:36px;width:100%;font-family:var(--font-mc);font-size:10px}
+.block-body input[type=text]{min-width:100px;flex:1}
+.block-body input[type=number]{width:70px}
+.block-body select{min-width:90px}
+.checkbox-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.checkbox-row input[type=checkbox]{accent-color:var(--mc-green)}
+.checkbox-row label{font-size:10px;color:var(--mc-text-dim);cursor:pointer}
+.field-desc{font-size:9px;color:var(--mc-text-dark);margin-left:44px;margin-bottom:4px}
+
+/* LISTS */
+.kv-list,.dyn-list{width:100%}
+.kv-item,.dyn-item{display:flex;align-items:center;gap:5px;margin-bottom:3px;padding:4px 6px;background:rgba(0,0,0,.15);border-radius:2px}
+.kv-item .kv-key{flex:1}.kv-item .kv-val{width:55px}
+.kv-item .kv-del,.dyn-item .dyn-del{width:18px;height:18px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);color:#C0392B;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;border-radius:2px}
+.kv-item .kv-del:hover,.dyn-item .dyn-del:hover{background:var(--mc-danger);color:#fff}
+.kv-add-btn,.dyn-add-btn{padding:3px 9px;font-size:10px;cursor:pointer;border:1px dashed var(--mc-border-light);border-radius:2px;background:transparent;color:var(--mc-text-dim);margin-top:2px;transition:all .15s}
+.kv-add-btn:hover,.dyn-add-btn:hover{border-color:var(--mc-green);color:var(--mc-green-hover)}
+.dyn-item input{flex:1}
+
+/* DRAG */
+.drag-overlay{position:fixed;pointer-events:none;z-index:9999;opacity:.9;transform:scale(.95);font-size:12px;padding:6px 14px;border-radius:3px;color:#fff;font-family:var(--font-body);box-shadow:0 4px 16px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.2)}
+.drag-overlay-droppable{outline:2px dashed var(--mc-green)!important;outline-offset:-2px;background:rgba(94,124,22,.08)!important}
+.dragging-source{opacity:.25}
+.drop-zone-highlight{border:2px dashed var(--mc-green)!important;background:rgba(94,124,22,.06)!important;border-radius:4px;min-height:60px}
+
+/* TOAST */
+.toast{position:fixed;top:58px;right:16px;z-index:10000;padding:10px 16px;font-size:11px;color:var(--mc-text-light);transform:translateX(120%);opacity:0;transition:all .35s cubic-bezier(.68,-.55,.27,1.55);box-shadow:0 4px 16px rgba(0,0,0,.5);max-width:320px;border:1px solid rgba(255,255,255,.1);border-radius:3px;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.toast.show{transform:translateX(0);opacity:1}
+.toast.success{background:var(--mc-green);border-color:var(--mc-green-dark)}
+.toast.error{background:var(--mc-danger);border-color:#7A2020}
+.toast.info{background:var(--mc-info);border-color:#1A5070}
+
+/* RICH TEXT MODAL */
+.rt-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;animation:fadeIn .15s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.rt-modal{background:var(--mc-panel);border:2px solid var(--mc-green);border-radius:6px;width:620px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.6);animation:slideUp .2s}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.rt-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:2px solid #1A1A1A;font-size:13px;font-weight:bold;color:var(--mc-text);font-family:var(--font-mc);letter-spacing:.5px}
+.rt-close-btn{background:none;border:none;color:var(--mc-text-dim);font-size:18px;cursor:pointer;padding:0 4px}
+.rt-close-btn:hover{color:#E74C3C}
+.rt-body{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.rt-segment{background:#1A1A1A;border:1px solid #3A3A3A;border-radius:4px;padding:10px;position:relative;transition:border-color .2s}
+.rt-seg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.rt-seg-label{font-size:10px;color:var(--mc-text-dim);font-weight:600}
+.rt-seg-del{background:none;border:none;color:#E74C3C;font-size:12px;cursor:pointer;padding:2px 6px;border-radius:3px}
+.rt-seg-del:hover{background:rgba(231,76,60,.12)}
+.rt-seg-row{display:flex;gap:6px;margin-bottom:4px;align-items:center}
+.rt-seg-text{flex:1;background:#111;border:1px solid #3A3A3A;border-radius:2px;padding:5px 8px;color:var(--mc-text);font-size:12px}
+.rt-seg-text:focus{border-color:var(--mc-green);outline:none;box-shadow:0 0 4px var(--mc-green-glow)}
+.rt-seg-color{background:#111;border:1px solid #3A3A3A;border-radius:2px;padding:4px 7px;color:var(--mc-text);font-size:11px;cursor:pointer}
+.rt-seg-color:focus{border-color:var(--mc-green);outline:none}
+.rt-format-row{display:flex;gap:3px}
+.rt-fmt-btn{width:30px;height:26px;border:1px solid #3A3A3A;background:#111;color:var(--mc-text-dim);border-radius:2px;cursor:pointer;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.rt-fmt-btn:hover{border-color:var(--mc-border-light);color:var(--mc-text)}
+.rt-fmt-btn.active{background:var(--mc-green);border-color:var(--mc-green-dark);color:#fff}
+.rt-add-btn{align-self:flex-start;background:#1A1A1A;border:1px dashed var(--mc-border-light);border-radius:4px;color:var(--mc-text-dim);padding:6px 14px;cursor:pointer;font-size:11px;transition:all .12s}
+.rt-add-btn:hover{border-color:var(--mc-green);color:var(--mc-green);background:rgba(94,124,22,.06)}
+.rt-preview{background:#111;border:1px solid #3A3A3A;border-radius:4px;padding:10px 14px;margin-top:3px;min-height:36px}
+.rt-preview-label{font-size:9px;color:var(--mc-text-dark);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.rt-preview-text{font-size:13px;word-break:break-all;line-height:1.5}
+.rt-footer{display:flex;justify-content:flex-end;gap:8px;padding:10px 16px;border-top:2px solid #1A1A1A}
+.rt-btn{padding:6px 16px;border:none;border-radius:3px;cursor:pointer;font-size:11px;font-weight:bold;transition:all .12s;text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.rt-btn-cancel{background:#3A3A3A;color:var(--mc-text-dim)}
+.rt-btn-cancel:hover{background:#4A4A4A;color:var(--mc-text)}
+.rt-btn-save{background:var(--mc-green);color:#fff}
+.rt-btn-save:hover{background:var(--mc-green-hover)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.palette-panel{width:200px;min-width:180px}.output-panel{width:300px;min-width:260px}}
+@media(max-width:768px){
+  .main-container{flex-direction:column}
+  .palette-panel{width:100%;min-width:unset;height:200px}
+  .output-panel{width:100%;min-width:unset;height:220px}
+  .header-title h1{font-size:9px}
+  .header-title .subtitle{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ======== HEADER ======== -->
+<header class="header">
+  <div class="header-title">
+    <div class="header-icon">⛏️</div>
+    <div>
+      <h1>物品组件生成器</h1>
+      <div class="subtitle">Item Component Builder</div>
+    </div>
+  </div>
+  <div class="header-badge">26.1.2</div>
+</header>
+
+<!-- ======== MAIN ======== -->
+<div class="main-container">
+
+  <!-- Left: Palette -->
+  <div class="palette-panel panel" id="palettePanel">
+    <div class="panel-header"><span class="icon">🧱</span> 积木工具箱</div>
+    <div class="palette-tabs" id="paletteTabs"></div>
+    <div class="palette-scroll panel-body" id="paletteContent"></div>
+  </div>
+
+  <!-- Center: Workspace -->
+  <div class="workspace-panel panel" id="workspacePanel">
+    <div class="panel-header"><span class="icon">🏗️</span> 工作区</div>
+    <div class="workspace-toolbar">
+      <span class="block-count" id="blockCount">已添加: 0 个组件</span>
+      <button class="mc-btn mc-btn-ghost" onclick="toggleAllBlocks()">❄️ <span style="font-family:var(--font-body)">展开</span></button>
+      <button class="mc-btn mc-btn-danger" onclick="clearWorkspace()">🗑️ <span style="font-family:var(--font-body)">清空</span></button>
+    </div>
+    <div class="workspace-area" id="workspaceArea">
+      <!-- Base Item Block -->
+      <div class="block-base-item" id="baseItemBlock">
+        <div class="block-header">
+          <span class="icon">🎯</span>
+          <span>基础物品</span>
+          <span style="font-size:8px;color:var(--mc-text-dark);font-weight:normal;font-family:var(--font-body);margin-left:auto">配置物品类型和命令参数</span>
+        </div>
+        <div class="block-body" id="baseItemBody">
+          <div class="field-row">
+            <label>物品</label>
+            <select id="itemSelect" onchange="onBaseItemChange()">
+              <optgroup label="⚔️ 武器">
+                <option value="minecraft:wooden_sword">木剑</option>
+                <option value="minecraft:stone_sword">石剑</option>
+                <option value="minecraft:iron_sword">铁剑</option>
+                <option value="minecraft:golden_sword">金剑</option>
+                <option value="minecraft:diamond_sword" selected>钻石剑</option>
+                <option value="minecraft:netherite_sword">下界合金剑</option>
+                <option value="minecraft:bow">弓</option>
+                <option value="minecraft:crossbow">弩</option>
+                <option value="minecraft:trident">三叉戟</option>
+                <option value="minecraft:mace">狼牙棒</option>
+              </optgroup>
+              <optgroup label="🛡️ 防具">
+                <option value="minecraft:leather_helmet">皮革头盔</option>
+                <option value="minecraft:leather_chestplate">皮革胸甲</option>
+                <option value="minecraft:leather_leggings">皮革护腿</option>
+                <option value="minecraft:leather_boots">皮革靴子</option>
+                <option value="minecraft:diamond_helmet">钻石头盔</option>
+                <option value="minecraft:diamond_chestplate">钻石胸甲</option>
+                <option value="minecraft:diamond_leggings">钻石护腿</option>
+                <option value="minecraft:diamond_boots">钻石靴子</option>
+                <option value="minecraft:netherite_helmet">下界合金头盔</option>
+                <option value="minecraft:netherite_chestplate">下界合金胸甲</option>
+                <option value="minecraft:netherite_leggings">下界合金护腿</option>
+                <option value="minecraft:netherite_boots">下界合金靴子</option>
+                <option value="minecraft:turtle_helmet">海龟壳</option>
+                <option value="minecraft:elytra">鞘翅</option>
+              </optgroup>
+              <optgroup label="🧰 工具">
+                <option value="minecraft:wooden_pickaxe">木镐</option>
+                <option value="minecraft:stone_pickaxe">石镐</option>
+                <option value="minecraft:iron_pickaxe">铁镐</option>
+                <option value="minecraft:diamond_pickaxe">钻石镐</option>
+                <option value="minecraft:netherite_pickaxe">下界合金镐</option>
+                <option value="minecraft:shears">剪刀</option>
+                <option value="minecraft:fishing_rod">钓鱼竿</option>
+                <option value="minecraft:flint_and_steel">打火石</option>
+                <option value="minecraft:shield">盾牌</option>
+              </optgroup>
+              <optgroup label="🍖 食物">
+                <option value="minecraft:apple">苹果</option>
+                <option value="minecraft:golden_apple">金苹果</option>
+                <option value="minecraft:enchanted_golden_apple">附魔金苹果</option>
+                <option value="minecraft:cooked_beef">牛排</option>
+                <option value="minecraft:golden_carrot">金胡萝卜</option>
+                <option value="minecraft:suspicious_stew">可疑的炖汤</option>
+              </optgroup>
+              <optgroup label="📦 其他">
+                <option value="minecraft:player_head">玩家头颅</option>
+                <option value="minecraft:book">书</option>
+                <option value="minecraft:enchanted_book">附魔书</option>
+                <option value="minecraft:potion">药水</option>
+                <option value="minecraft:lingering_potion">滞留药水</option>
+                <option value="minecraft:splash_potion">喷溅药水</option>
+                <option value="minecraft:written_book">成书</option>
+                <option value="minecraft:firework_rocket">烟花火箭</option>
+                <option value="minecraft:firework_star">烟花之星</option>
+                <option value="minecraft:goat_horn">山羊角</option>
+                <option value="minecraft:totem_of_undying">不死图腾</option>
+                <option value="minecraft:compass">指南针</option>
+                <option value="minecraft:recovery_compass">追溯指针</option>
+                <option value="minecraft:lodestone_compass">磁石指南针</option>
+                <option value="minecraft:ominous_bottle">不祥之瓶</option>
+                <option value="minecraft:decorated_pot">装饰陶罐</option>
+                <option value="minecraft:brush">刷子</option>
+                <option value="minecraft:spyglass">望远镜</option>
+                <option value="minecraft:bundle">收纳袋</option>
+              </optgroup>
+            </select>
+            <span style="color:var(--mc-text-dark);font-size:10px">或手动:</span>
+            <input type="text" id="itemCustomInput" placeholder="minecraft:custom_item"
+                   oninput="onCustomItemInput()" style="min-width:140px;width:auto;flex:0 1 auto">
+          </div>
+          <div class="cmd-options">
+            <label>目标:</label>
+            <select id="targetSelector" onchange="onBaseItemChange()" style="width:70px">
+              <option value="@p">@p</option>
+              <option value="@a">@a</option>
+              <option value="@r">@r</option>
+              <option value="@s">@s</option>
+              <option value="@e">@e</option>
+            </select>
+            <label>数量:</label>
+            <input type="number" id="itemCount" value="1" min="1" max="99" onchange="onBaseItemChange()" style="width:55px">
+            <label style="margin-left:6px;font-size:10px;color:var(--mc-text-dark)">
+              <input type="checkbox" id="includeCmdPrefix" checked onchange="onBaseItemChange()"> /give 前缀
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Component blocks -->
+      <div class="block-list" id="blockList"
+           ondragover="onWorkspaceDragOver(event)"
+           ondrop="onWorkspaceDrop(event)"></div>
+
+      <div id="workspaceHint" class="workspace-empty">
+        <div class="big-icon">🧩</div>
+        <p>从左侧积木工具箱拖拽组件到此处<br>或点击积木上的 <span style="color:var(--mc-green-hover);font-weight:bold">+</span> 按钮添加</p>
+        <div class="hint">💡 提示: 可以拖拽积木重新排序</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Output -->
+  <div class="output-panel panel" id="outputPanel">
+    <div class="panel-header">
+      <span class="icon">📤</span> 输出
+      <div class="output-tabs" id="outputTabs" style="margin-left:auto">
+        <button class="output-tab active" data-tab="command" onclick="switchOutputTab('command')">/give 命令</button>
+        <button class="output-tab" data-tab="json" onclick="switchOutputTab('json')">JSON</button>
+      </div>
+    </div>
+    <div class="output-content" id="outputContent">
+      <div class="placeholder">
+        <div class="icon">📋</div>
+        <p>添加组件后自动生成输出</p>
+      </div>
+      <pre id="outputPre" style="display:none"></pre>
+      <div class="output-error" id="outputError"></div>
+    </div>
+    <div class="output-actions">
+      <button class="mc-btn mc-btn-green" onclick="copyOutput()">📋 复制</button>
+      <button class="mc-btn mc-btn-green" onclick="downloadOutput()">💾 下载</button>
+      <button class="mc-btn mc-btn-ghost" onclick="switchOutputTab('command')" id="previewGiveBtn">🔍 预览</button>
+      <span class="output-char-count" id="outputCharCount"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Datalists -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>// ================================================================
+// MINECRAFT 26.1.2 COMPONENT DEFINITIONS
+// ================================================================
+
+const CATEGORIES = {
+  basic:   { id:'basic',   name:'基础信息', icon:'📋', color:'#4a9c4a', dark:'#3d8a3d' },
+  combat:  { id:'combat',  name:'战斗属性', icon:'⚔️', color:'#c0392b', dark:'#a93226' },
+  utility: { id:'utility', name:'功能',     icon:'🔧', color:'#2980b9', dark:'#2471a3' },
+  container:{id:'container',name:'容器',    icon:'📦', color:'#8e44ad', dark:'#7d3c98' },
+  info:    { id:'info',    name:'信息',     icon:'ℹ️', color:'#f39c12', dark:'#d68910' },
+  deco:    { id:'deco',    name:'装饰',     icon:'🎨', color:'#16a085', dark:'#138d75' },
+  entity:  { id:'entity',  name:'实体',     icon:'👾', color:'#d35400', dark:'#ba4a00' },
+  special: { id:'special', name:'特殊',     icon:'⭐', color:'#7f8c8d', dark:'#6c7a7e' },
+};
+
+const ENCHANTMENTS_DATA = [
+  {id:'aqua_affinity',name:'水下速掘',maxLevel:1,desc:'增加水下挖掘速度'},
+  {id:'bane_of_arthropods',name:'节肢杀手',maxLevel:5,desc:'对节肢生物造成额外伤害并附加缓慢效果'},
+  {id:'blast_protection',name:'爆炸保护',maxLevel:4,desc:'减少受到的爆炸伤害和爆炸击退'},
+  {id:'breach',name:'破甲',maxLevel:4,desc:'降低攻击目标的护甲值对攻击伤害的减少效果'},
+  {id:'channeling',name:'引雷',maxLevel:1,desc:'三叉戟击中实体时召唤闪电'},
+  {id:'binding_curse',name:'绑定诅咒',maxLevel:1,desc:'装备后不能被卸下'},
+  {id:'vanishing_curse',name:'消失诅咒',maxLevel:1,desc:'生物死亡时物品会消失'},
+  {id:'density',name:'致密',maxLevel:5,desc:'增加重锤下落攻击所造成的伤害'},
+  {id:'depth_strider',name:'深海探索者',maxLevel:3,desc:'增加水下行走速度'},
+  {id:'efficiency',name:'效率',maxLevel:5,desc:'加快挖掘速度'},
+  {id:'feather_falling',name:'摔落缓冲',maxLevel:4,desc:'减少受到的摔落伤害'},
+  {id:'fire_aspect',name:'火焰附加',maxLevel:2,desc:'使被近战攻击目标着火'},
+  {id:'fire_protection',name:'火焰保护',maxLevel:4,desc:'减少受到的火焰伤害和着火时间'},
+  {id:'flame',name:'火矢',maxLevel:1,desc:'使射出的箭着火'},
+  {id:'fortune',name:'时运',maxLevel:3,desc:'增加方块掉落物的数量或概率'},
+  {id:'frost_walker',name:'冰霜行者',maxLevel:2,desc:'在水面行走时产生霜冰'},
+  {id:'impaling',name:'穿刺',maxLevel:5,desc:'对水生生物造成额外伤害'},
+  {id:'infinity',name:'无限',maxLevel:1,desc:'射箭时不消耗箭'},
+  {id:'knockback',name:'击退',maxLevel:2,desc:'增加近战攻击造成的击退距离'},
+  {id:'looting',name:'抢夺',maxLevel:3,desc:'增加生物掉落物的数量或概率'},
+  {id:'loyalty',name:'忠诚',maxLevel:3,desc:'使掷出后的三叉戟返回'},
+  {id:'luck_of_the_sea',name:'海之眷顾',maxLevel:3,desc:'增加钓鱼时获得宝藏的概率'},
+  {id:'lunge',name:'突进',maxLevel:3,desc:'戳刺攻击时向前移动一段距离'},
+  {id:'lure',name:'饵钓',maxLevel:3,desc:'减少钓鱼所需的时间'},
+  {id:'mending',name:'经验修补',maxLevel:1,desc:'用经验修补工具耐久度'},
+  {id:'multishot',name:'多重射击',maxLevel:1,desc:'一次装填射三发'},
+  {id:'piercing',name:'穿透',maxLevel:4,desc:'使箭穿过多个实体'},
+  {id:'power',name:'力量',maxLevel:5,desc:'增加箭伤害'},
+  {id:'projectile_protection',name:'弹射物保护',maxLevel:4,desc:'减少受到的弹射物伤害'},
+  {id:'protection',name:'保护',maxLevel:4,desc:'减少受到的大多数伤害'},
+  {id:'punch',name:'冲击',maxLevel:2,desc:'增加箭的击退距离'},
+  {id:'quick_charge',name:'快速装填',maxLevel:3,desc:'减少弩的填装时间'},
+  {id:'respiration',name:'水下呼吸',maxLevel:3,desc:'延长水下呼吸时间'},
+  {id:'riptide',name:'激流',maxLevel:3,desc:'将玩家向掷出三叉戟的方向发射'},
+  {id:'sharpness',name:'锋利',maxLevel:5,desc:'增加近战攻击伤害'},
+  {id:'silk_touch',name:'精准采集',maxLevel:1,desc:'开采方块掉落其方块物品'},
+  {id:'smite',name:'亡灵杀手',maxLevel:5,desc:'对亡灵生物造成额外伤害'},
+  {id:'soul_speed',name:'灵魂疾行',maxLevel:3,desc:'增加在灵魂沙和灵魂土上的移动速度'},
+  {id:'sweeping_edge',name:'横扫之刃',maxLevel:3,desc:'增加横扫攻击伤害'},
+  {id:'swift_sneak',name:'迅捷潜行',maxLevel:3,desc:'提高潜行和爬行时的移动速度'},
+  {id:'thorns',name:'荆棘',maxLevel:3,desc:'给予攻击者伤害'},
+  {id:'unbreaking',name:'耐久',maxLevel:3,desc:'减少触发耐久消耗的概率'},
+  {id:'wind_burst',name:'风爆',maxLevel:3,desc:'重锤击中目标后产生风爆弹起攻击者'}
+];
+
+const POTIONS = [
+  'minecraft:water','minecraft:mundane','minecraft:thick','minecraft:awkward',
+  'minecraft:night_vision','minecraft:invisibility','minecraft:leaping',
+  'minecraft:fire_resistance','minecraft:swiftness','minecraft:slowness',
+  'minecraft:water_breathing','minecraft:healing','minecraft:harming',
+  'minecraft:poison','minecraft:regeneration','minecraft:strength',
+  'minecraft:weakness','minecraft:luck','minecraft:turtle_master',
+  'minecraft:slow_falling','minecraft:infested','minecraft:oozing',
+  'minecraft:weaving','minecraft:wind_charged'
+];
+
+const EFFECTS = [
+  'minecraft:speed','minecraft:slowness','minecraft:haste','minecraft:mining_fatigue',
+  'minecraft:strength','minecraft:instant_health','minecraft:instant_damage',
+  'minecraft:jump_boost','minecraft:nausea','minecraft:regeneration',
+  'minecraft:resistance','minecraft:fire_resistance','minecraft:water_breathing',
+  'minecraft:invisibility','minecraft:blindness','minecraft:night_vision',
+  'minecraft:hunger','minecraft:weakness','minecraft:poison','minecraft:wither',
+  'minecraft:health_boost','minecraft:absorption','minecraft:saturation',
+  'minecraft:glowing','minecraft:levitation','minecraft:luck','minecraft:unluck',
+  'minecraft:slow_falling','minecraft:conduit_power','minecraft:dolphins_grace',
+  'minecraft:bad_omen','minecraft:hero_of_the_village','minecraft:darkness',
+  'minecraft:trial_omen','minecraft:raid_omen','minecraft:wind_charged',
+  'minecraft:weaving','minecraft:oozing','minecraft:infested'
+];
+
+const TRIM_MATERIALS = [
+  'minecraft:quartz','minecraft:iron','minecraft:netherite','minecraft:redstone',
+  'minecraft:copper','minecraft:gold','minecraft:emerald','minecraft:diamond',
+  'minecraft:lapis','minecraft:amethyst','minecraft:resin'
+];
+
+const TRIM_PATTERNS = [
+  'minecraft:sentry','minecraft:dune','minecraft:coast','minecraft:wild',
+  'minecraft:ward','minecraft:eye','minecraft:vex','minecraft:tide',
+  'minecraft:snout','minecraft:rib','minecraft:spire','minecraft:silence',
+  'minecraft:wayfinder','minecraft:raiser','minecraft:shaper','minecraft:host',
+  'minecraft:flow','minecraft:bolt'
+];
+
+const SOUNDS = [
+  'minecraft:block.note_block.harp','minecraft:block.note_block.basedrum',
+  'minecraft:block.note_block.snare','minecraft:block.note_block.hat',
+  'minecraft:block.note_block.bass','minecraft:block.note_block.flute',
+  'minecraft:block.note_block.bell','minecraft:block.note_block.guitar',
+  'minecraft:block.note_block.chime','minecraft:block.note_block.xylophone',
+  'minecraft:block.note_block.iron_xylophone','minecraft:block.note_block.cow_bell',
+  'minecraft:block.note_block.didgeridoo','minecraft:block.note_block.bit',
+  'minecraft:block.note_block.banjo','minecraft:block.note_block.pling',
+  'minecraft:item.goat_horn.sing','minecraft:item.goat_horn.call',
+  'minecraft:item.goat_horn.seek','minecraft:item.goat_horn.feel',
+  'minecraft:item.goat_horn.admire','minecraft:item.goat_horn.think',
+  'minecraft:item.goat_horn.yearn','minecraft:item.goat_horn.dream'
+];
+
+const DYE_COLORS = [
+  'minecraft:white','minecraft:orange','minecraft:magenta','minecraft:light_blue',
+  'minecraft:yellow','minecraft:lime','minecraft:pink','minecraft:gray',
+  'minecraft:light_gray','minecraft:cyan','minecraft:purple','minecraft:blue',
+  'minecraft:brown','minecraft:green','minecraft:red','minecraft:black'
+];
+
+const INSTRUMENTS = [
+  'minecraft:ponder_goat_horn','minecraft:sing_goat_horn','minecraft:seek_goat_horn',
+  'minecraft:feel_goat_horn','minecraft:admire_goat_horn','minecraft:call_goat_horn',
+  'minecraft:yearn_goat_horn','minecraft:dream_goat_horn'
+];
+
+const ARMOR_SLOTS = ['mainhand','offhand','head','chest','legs','feet','body','saddle'];
+
+const ATTRIBUTES = [
+  'minecraft:generic.armor','minecraft:generic.armor_toughness',
+  'minecraft:generic.attack_damage','minecraft:generic.attack_speed',
+  'minecraft:generic.attack_knockback','minecraft:generic.block_break_speed',
+  'minecraft:generic.block_interaction_range','minecraft:generic.burning_time',
+  'minecraft:generic.explosion_knockback_resistance',
+  'minecraft:generic.fall_damage_multiplier','minecraft:generic.flying_speed',
+  'minecraft:generic.follow_range','minecraft:generic.gravity',
+  'minecraft:generic.jump_strength','minecraft:generic.knockback_resistance',
+  'minecraft:generic.luck','minecraft:generic.max_absorption',
+  'minecraft:generic.max_health','minecraft:generic.movement_speed',
+  'minecraft:generic.oxygen_bonus','minecraft:generic.safe_fall_distance',
+  'minecraft:generic.scale','minecraft:generic.step_height',
+  'minecraft:generic.sturdiness','minecraft:generic.water_movement_efficiency',
+  'minecraft:player.block_interaction_range','minecraft:player.entity_interaction_range',
+  'minecraft:player.mining_efficiency','minecraft:player.sneaking_speed',
+  'minecraft:player.submerged_mining_speed','minecraft:player.sweeping_damage_ratio'
+];
+
+const SOUND_EVENTS = [
+  'minecraft:entity.generic.eat','minecraft:entity.generic.drink',
+  'minecraft:entity.generic.explode','minecraft:block.wood.break',
+  'minecraft:item.armor.equip_generic','minecraft:entity.wolf.bark'
+];
+
+const BANNER_PATTERNS = [
+  {id:'minecraft:base',name:'基础'},{id:'minecraft:square_bottom_left',name:'下左角'},
+  {id:'minecraft:square_bottom_right',name:'下右角'},{id:'minecraft:square_top_left',name:'上左角'},
+  {id:'minecraft:square_top_right',name:'上右角'},{id:'minecraft:stripe_bottom',name:'底部条纹'},
+  {id:'minecraft:stripe_top',name:'顶部条纹'},{id:'minecraft:stripe_left',name:'左条纹'},
+  {id:'minecraft:stripe_right',name:'右条纹'},{id:'minecraft:stripe_center',name:'中条纹'},
+  {id:'minecraft:stripe_middle',name:'水平中条纹'},{id:'minecraft:stripe_downright',name:'右下斜条纹'},
+  {id:'minecraft:stripe_downleft',name:'左下斜条纹'},{id:'minecraft:small_stripes',name:'横纹'},
+  {id:'minecraft:cross',name:'十字'},{id:'minecraft:straight_cross',name:'直角十字'},
+  {id:'minecraft:triangle_bottom',name:'下三角'},{id:'minecraft:triangle_top',name:'上三角'},
+  {id:'minecraft:triangles_bottom',name:'下锯齿'},{id:'minecraft:triangles_top',name:'上锯齿'},
+  {id:'minecraft:diagonal_left',name:'左下对角'},{id:'minecraft:diagonal_up_right',name:'右上对角'},
+  {id:'minecraft:diagonal_up_left',name:'左上对角'},{id:'minecraft:diagonal_right',name:'右下对角'},
+  {id:'minecraft:circle',name:'圆'},{id:'minecraft:rhombus',name:'菱形'},
+  {id:'minecraft:half_vertical',name:'垂直半色'},{id:'mineraft:half_horizontal',name:'水平半色'},
+  {id:'minecraft:half_vertical_right',name:'右垂直半色'},{id:'minecraft:half_horizontal_bottom',name:'下水平半色'},
+  {id:'minecraft:border',name:'边框'},{id:'minecraft:curly_border',name:'波浪边框'},
+  {id:'minecraft:gradient',name:'渐变色'},{id:'minecraft:gradient_up',name:'上渐变色'},
+  {id:'minecraft:bricks',name:'砖纹'},{id:'minecraft:skull',name:'头颅'},
+  {id:'minecraft:flower',name:'花朵'},{id:'minecraft:mojang',name:'Mojang 徽标'},
+  {id:'minecraft:globe',name:'地球'},{id:'minecraft:creaper',name:'苦力怕'},
+  {id:'minecraft:pine',name:'松树'},{id:'minecraft:tree',name:'树'}
+];
+
+const FIREWORK_SHAPES = ['small_ball','large_ball','star','creaper','burst'];
+
+// ================================================================
+// COMPONENT DEFINITIONS
+// ================================================================
+
+const COMPONENT_DEFS = {
+  // ===== BASIC =====
+  item_name: {
+    id:'item_name', name:'基础名称(非斜体)', category:'basic',
+    icon:'📝', desc:'覆盖物品的默认名称，以普通文本显示（无斜体）', params:[
+      {type:'richtext', key:'name', label:'名称文本', desc:'纯文本显示，可设置颜色/格式', default:[]}
+    ],
+    toJSON(p){ return toTextComponent(p.name, false); },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  custom_name: {
+    id:'custom_name', name:'自定义名称(斜体)', category:'basic',
+    icon:'✏️', desc:'类似铁砧重命名的效果，始终显示斜体（紫色）', params:[
+      {type:'richtext', key:'name', label:'名称文本', desc:'将显示为斜体风格，可设置颜色/格式', default:[]}
+    ],
+    toJSON(p){ return toTextComponent(p.name, true); },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  lore: {
+    id:'lore', name:'Lore 描述', category:'basic',
+    icon:'📜', params:[
+      {type:'dynlist_richtext', key:'lines', label:'描述行', desc:'每行一条，点击 ✏️ 编辑颜色/格式；支持添加/删除行', default:[[{text:''}]]}
+    ],
+    toJSON(p){
+      if(!p.lines||!p.lines.length) return null;
+      const valid=p.lines.filter(segs=>Array.isArray(segs)&&segs.some(s=>s.text&&s.text.trim()));
+      if(!valid.length) return null;
+      return valid.map(segs=>{
+        if(segs.length===1&&segs[0].text){
+          const s=segs[0];
+          if(!s.color&&!s.bold&&!s.italic&&!s.underlined&&!s.strikethrough&&!s.obfuscated) return s.text;
+        }
+        return JSON.stringify(toTextComponent(segs,false));
+      });
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  max_stack_size: {
+    id:'max_stack_size', name:'最大堆叠数', category:'basic',
+    icon:'📦', params:[
+      {type:'number', key:'size', label:'堆叠数量', min:1, max:99, default:64}
+    ],
+    toJSON(p){ return p.size || null },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  rarity: {
+    id:'rarity', name:'稀有度', category:'basic',
+    icon:'💎', params:[
+      {type:'select', key:'rarity', label:'稀有度', options:[
+        {value:'common',label:'Common(白色)'},{value:'uncommon',label:'Uncommon(黄色)'},
+        {value:'rare',label:'Rare(青色)'},{value:'epic',label:'Epic(品红色)'}
+      ], default:'common'}
+    ],
+    toJSON(p){ return p.rarity || null },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  custom_data: {
+    id:'custom_data', name:'自定义数据', category:'basic',
+    icon:'🗃️', desc:'存储自定义 NBT 数据 (JSON 对象)', params:[
+      {type:'textarea', key:'data', label:'JSON 数据', desc:'任意 JSON 对象', default:'{}'}
+    ],
+    toJSON(p){ try{ return JSON.parse(p.data||'{}') }catch(e){ return null } },
+    toCmd(p){ return this.toJSON(p) }
+  },
+
+  // ===== COMBAT =====
+  enchantments: {
+    id:'enchantments', name:'附魔', category:'combat',
+    icon:'⚡', params:[
+      {type:'kvlist_ench', key:'enchants', label:'附魔', desc:'添加附魔和等级', default:[{key:'sharpness',val:5}]},
+      {type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}
+    ],
+    toJSON(p){
+      if(!p.enchants||!p.enchants.length) return null;
+      const levels={}; p.enchants.forEach(e=>{if(e.key&&e.val>0)levels[e.key]=Number(e.val)});
+      if(!Object.keys(levels).length) return null;
+      if(!p.show_in_tooltip) levels.show_in_tooltip=false;
+      return levels;
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  stored_enchantments: {
+    id:'stored_enchantments', name:'存储附魔(附魔书)', category:'combat',
+    icon:'📖', desc:'用于附魔书的存储附魔', params:[
+      {type:'kvlist_ench', key:'enchants', label:'附魔', default:[{key:'sharpness',val:1}]},
+      {type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}
+    ],
+    toJSON(p){
+      if(!p.enchants||!p.enchants.length) return null;
+      const levels={}; p.enchants.forEach(e=>{if(e.key&&e.val>0)levels[e.key]=Number(e.val)});
+      if(!Object.keys(levels).length) return null;
+      if(!p.show_in_tooltip) levels.show_in_tooltip=false;
+      return levels;
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  unbreakable: {
+    id:'unbreakable', name:'无法破坏', category:'combat',
+    icon:'🛡️', params:[
+      {type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}
+    ],
+    toJSON(p){ return p.show_in_tooltip===false ? {show_in_tooltip:false} : {} },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  damage: {
+    id:'damage', name:'伤害值', category:'combat',
+    icon:'💥', desc:'物品已受到的伤害值', params:[
+      {type:'number', key:'damage', label:'已受损耗', min:0, max:999999, default:0}
+    ],
+    toJSON(p){ return p.damage||null },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  max_damage: {
+    id:'max_damage', name:'最大耐久', category:'combat',
+    icon:'🔨', desc:'覆盖物品默认的最大耐久度', params:[
+      {type:'number', key:'max', label:'最大耐久', min:1, max:999999, default:100}
+    ],
+    toJSON(p){ return p.max||null },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  attribute_modifiers: {
+    id:'attribute_modifiers', name:'属性修饰符', category:'combat',
+    icon:'📊', params:[
+      {type:'list_attr', key:'modifiers', label:'属性修饰符', default:[]}
+    ],
+    toJSON(p){
+      if(!p.modifiers||!p.modifiers.length) return null;
+      const mods=[];
+      p.modifiers.forEach(m=>{
+        const type=m.type; if(!type) return;
+        const amount=Number(m.amount); if(isNaN(amount)) return;
+        const mod={type,name:m.name||'modifier',amount:Number(amount),operation:m.operation||'add_value',slot:m.slot||'any'};
+        mod.id=m.id||crypto.randomUUID();
+        if(m.show_in_tooltip===false) mod.display={type:'hidden'};
+        mods.push(mod);
+      });
+      return mods.length?mods:null;
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  tool: {
+    id:'tool', name:'工具属性', category:'combat',
+    icon:'⛏️', desc:'定义挖掘速度和规则', params:[
+      {type:'number', key:'default_mining_speed', label:'默认挖掘速度', min:0.1, step:0.1, default:1.0},
+      {type:'number', key:'damage_per_block', label:'每方块损耗', min:0, default:0},
+      {type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}
+    ],
+    toJSON(p){
+      return {rules:[], default_mining_speed:Number(p.default_mining_speed)||1,
+        damage_per_block:Number(p.damage_per_block)||0, show_in_tooltip:p.show_in_tooltip!==false};
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+
+  // ===== UTILITY =====
+  food: {
+    id:'food', name:'食物属性', category:'utility',
+    icon:'🍖', params:[
+      {type:'number', key:'nutrition', label:'营养值', min:0, default:4},
+      {type:'number', key:'saturation', label:'饱和度', min:0, step:0.1, default:4.8},
+      {type:'checkbox', key:'can_always_eat', label:'始终可吃', default:false},
+      {type:'number', key:'eat_seconds', label:'食用时间(秒)', min:0, step:0.1, default:1.6}
+    ],
+    toJSON(p){ return {nutrition:Number(p.nutrition)||0, saturation:Number(p.saturation)||0, can_always_eat:!!p.can_always_eat, eat_seconds:Number(p.eat_seconds)||1.6}; },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  potion_contents: {
+    id:'potion_contents', name:'药水效果', category:'utility',
+    icon:'🧪', params:[
+      {type:'select', key:'potion', label:'药水类型', options:POTIONS.map(p=>({value:p,label:p.replace('minecraft:','')})), default:'minecraft:water'},
+      {type:'number', key:'custom_color', label:'自定义颜色(十六进制)', desc:'如 ff0000 为红色', default:0}
+    ],
+    toJSON(p){
+      const r={};
+      if(p.potion) r.potion=p.potion;
+      if(p.custom_color) r.custom_color=parseInt(String(p.custom_color),16)||parseInt(p.custom_color);
+      return Object.keys(r).length?r:null;
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  consumable: {
+    id:'consumable', name:'消耗品属性', category:'utility',
+    icon:'🍴', desc:'定义物品作为消耗品的行为', params:[
+      {type:'number', key:'consume_seconds', label:'消耗时间(秒)', min:0, step:0.1, default:1.6},
+      {type:'select', key:'animation', label:'动画', options:[
+        {value:'eat',label:'吃'},{value:'drink',label:'喝'},{value:'block',label:'格挡'}
+      ], default:'eat'},
+      {type:'text', key:'sound', label:'音效(可选)', desc:'音效事件ID', default:''},
+      {type:'checkbox', key:'has_consume_particles', label:'消耗粒子', default:true}
+    ],
+    toJSON(p){
+      const r={consume_seconds:Number(p.consume_seconds)||1.6, animation:p.animation||'eat', has_consume_particles:!!p.has_consume_particles};
+      if(p.sound) r.sound=p.sound;
+      return r;
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  glider: { id:'glider', name:'滑翔(鞘翅)', category:'utility', icon:'🦅', desc:'物品可作为鞘翅滑翔', params:[], special:'flag', toJSON(){return{}}, toCmd(){return{}} },
+  equippable: {
+    id:'equippable', name:'可穿戴', category:'utility',
+    icon:'👕', desc:'定义物品可装备在特定槽位', params:[
+      {type:'select', key:'slot', label:'装备槽位', options:ARMOR_SLOTS.map(s=>({value:s,label:s})), default:'head'},
+      {type:'select', key:'equip_sound', label:'装备音效', options:SOUND_EVENTS.map(s=>({value:s,label:s.replace('minecraft:','')})), default:'minecraft:item.armor.equip_generic'},
+      {type:'text', key:'model', label:'模型(可选)', desc:'装备模型位置', default:''},
+      {type:'checkbox', key:'camera_overlay', label:'镜头覆盖', default:false},
+      {type:'checkbox', key:'damage_on_hurt', label:'受伤时损耗', default:true}
+    ],
+    toJSON(p){
+      const r={slot:p.slot||'head', equip_sound:p.equip_sound||'minecraft:item.armor.equip_generic', damage_on_hurt:p.damage_on_hurt!==false};
+      if(p.model) r.model=p.model;
+      if(p.camera_overlay) r.camera_overlay=true;
+      return r;
+    },
+    toCmd(p){ return this.toJSON(p) }
+  },
+  enchantment_glint_override: { id:'enchantment_glint_override', name:'附魔光效覆盖', category:'utility', icon:'✨', desc:'强制显示/隐藏附魔光效', params:[{type:'checkbox', key:'glint', label:'显示附魔光效', default:true}], toJSON(p){return !!p.glint}, toCmd(p){return this.toJSON(p)} },
+  fire_resistant: { id:'fire_resistant', name:'防火', category:'utility', icon:'🔥', desc:'物品不会被火焰/熔岩烧毁', params:[], special:'flag', toJSON(){return{}}, toCmd(){return{}} },
+  use_cooldown: {
+    id:'use_cooldown', name:'使用冷却', category:'utility', icon:'⏱️', params:[
+      {type:'number', key:'seconds', label:'冷却秒数', min:0, step:0.1, default:1},
+      {type:'text', key:'cooldown_group', label:'冷却组(可选)', desc:'同一冷却组的物品共享冷却', default:''}
+    ],
+    toJSON(p){const r={seconds:Number(p.seconds)||1};if(p.cooldown_group)r.cooldown_group=p.cooldown_group;return r;},
+    toCmd(p){return this.toJSON(p)}
+  },
+
+  // ===== CONTAINER =====
+  container: { id:'container', name:'容器内容', category:'container', icon:'🗄️', desc:'容器内物品列表(潜影盒等)', params:[{type:'list_item', key:'items', label:'物品', default:[]}], toJSON(p){if(!p.items||!p.items.length)return null;return p.items.map((item,i)=>({slot:i,id:item.id||'minecraft:stone',count:Number(item.count)||1})).filter(it=>it.id);}, toCmd(p){return this.toJSON(p)} },
+  bundle_contents: { id:'bundle_contents', name:'收纳袋内容', category:'container', icon:'👜', params:[{type:'list_item', key:'items', label:'物品', default:[]}], toJSON(p){if(!p.items||!p.items.length)return null;return p.items.map(item=>({id:item.id||'minecraft:stone',count:Number(item.count)||1})).filter(it=>it.id);}, toCmd(p){return this.toJSON(p)} },
+  charged_projectiles: { id:'charged_projectiles', name:'弩箭/烟花', category:'container', icon:'🏹', params:[{type:'list_item', key:'projectiles', label:'投射物', default:[]}], toJSON(p){if(!p.projectiles||!p.projectiles.length)return null;const items=p.projectiles.map(item=>({id:item.id||'minecraft:arrow',count:Number(item.count)||1})).filter(it=>it.id);return items.length?items:null;}, toCmd(p){return this.toJSON(p)} },
+
+  // ===== INFO =====
+  hide_additional_tips: { id:'hide_additional_tips', name:'隐藏额外提示', category:'info', icon:'🙈', desc:'隐藏物品提示框中的附加信息', params:[], special:'flag', toJSON(){return{}}, toCmd(){return{}} },
+  map_id: { id:'map_id', name:'地图ID', category:'info', icon:'🗺️', params:[{type:'number', key:'id', label:'地图ID', min:0, default:0}], toJSON(p){return Number(p.id)||null}, toCmd(p){return this.toJSON(p)} },
+  map_color: { id:'map_color', name:'地图颜色', category:'info', icon:'🎨', desc:'地图物品的颜色表示', params:[{type:'number', key:'color', label:'颜色RGB', desc:'十进制RGB值', default:0}], toJSON(p){return Number(p.color)||null}, toCmd(p){return this.toJSON(p)} },
+  lock: { id:'lock', name:'容器锁', category:'info', icon:'🔒', desc:'为容器设置锁定密码', params:[{type:'text', key:'key', label:'锁密码', desc:'物品需有相同custom_data的key才能打开', default:''}], toJSON(p){return p.key||null}, toCmd(p){return this.toJSON(p)} },
+  creative_slot_lock: { id:'creative_slot_lock', name:'创造模式锁定', category:'info', icon:'🔓', desc:'锁定物品在创造模式物品栏中无法移除', params:[], special:'flag', toJSON(){return{}}, toCmd(){return{}} },
+  ominous_bottle_amplifier: { id:'ominous_bottle_amplifier', name:'不祥之瓶等级', category:'info', icon:'🧿', params:[{type:'number', key:'amplifier', label:'等级(0-4)', min:0, max:4, default:0}], toJSON(p){return Number(p.amplifier)||null}, toCmd(p){return this.toJSON(p)} },
+  recipes: { id:'recipes', name:'已知配方', category:'info', icon:'📘', desc:'知识之书记录的配方', params:[{type:'text', key:'recipes', label:'配方ID(逗号分隔)', desc:'如 minecraft:diamond_sword', default:''}], toJSON(p){return p.recipes?p.recipes.split(',').map(s=>s.trim()).filter(Boolean):null}, toCmd(p){return this.toJSON(p)} },
+
+  // ===== DECO =====
+  trim: { id:'trim', name:'盔甲纹饰', category:'deco', icon:'✨', params:[{type:'select', key:'material', label:'材料', options:TRIM_MATERIALS.map(m=>({value:m,label:m.replace('minecraft:','')})), default:'minecraft:quartz'},{type:'select', key:'pattern', label:'纹样', options:TRIM_PATTERNS.map(p=>({value:p,label:p.replace('minecraft:','')})), default:'minecraft:sentry'},{type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}], toJSON(p){return{material:p.material||'minecraft:quartz',pattern:p.pattern||'minecraft:sentry',show_in_tooltip:p.show_in_tooltip!==false}}, toCmd(p){return this.toJSON(p)} },
+  dyed_color: { id:'dyed_color', name:'染色颜色', category:'deco', icon:'🎨', desc:'皮革盔甲的染色颜色', params:[{type:'text', key:'rgb', label:'RGB颜色', desc:'十六进制如 FF0000', default:'FF0000'},{type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}], toJSON(p){const rgb=parseInt(String(p.rgb).replace('#',''),16);if(isNaN(rgb))return null;return{rgb,show_in_tooltip:p.show_in_tooltip!==false}}, toCmd(p){return this.toJSON(p)} },
+  banner_patterns: { id:'banner_patterns', name:'旗帜图案', category:'deco', icon:'🚩', params:[{type:'list_banner', key:'patterns', label:'图案', default:[]}], toJSON(p){if(!p.patterns||!p.patterns.length)return null;return p.patterns.map(pt=>({pattern:pt.pattern||'minecraft:square_bottom_left',color:pt.color||'minecraft:white'}))}, toCmd(p){return this.toJSON(p)} },
+  base_color: { id:'base_color', name:'基础颜色', category:'deco', icon:'🟫', desc:'旗帜或陶瓦的基础颜色', params:[{type:'select', key:'color', label:'颜色', options:DYE_COLORS.map(c=>({value:c,label:c.replace('minecraft:','')})), default:'minecraft:white'}], toJSON(p){return p.color||null}, toCmd(p){return this.toJSON(p)} },
+  block_state: { id:'block_state', name:'方块状态', category:'deco', icon:'🧱', desc:'放置方块时的方块状态属性', params:[{type:'text', key:'state', label:'状态键值对JSON', desc:'如 {"age":"7","waterlogged":"false"}', default:'{}'}], toJSON(p){try{const o=JSON.parse(p.state||'{}');return Object.keys(o).length?o:null}catch(e){return null}}, toCmd(p){return this.toJSON(p)} },
+  item_model: { id:'item_model', name:'物品模型', category:'deco', icon:'🎭', desc:'覆盖物品使用的模型', params:[{type:'text', key:'model', label:'模型ID', desc:'如 minecraft:diamond_sword', default:''}], toJSON(p){return p.model||null}, toCmd(p){return this.toJSON(p)} },
+  pot_decorations: { id:'pot_decorations', name:'陶罐装饰', category:'deco', icon:'🏺', desc:'装饰陶罐的侧面材料', params:[{type:'text', key:'sides', label:'材料(逗号分隔)', desc:'4个面用逗号分隔,如 minecraft:brick,minecraft:brick,minecraft:brick,minecraft:brick', default:''}], toJSON(p){if(!p.sides)return null;const sides=p.sides.split(',').map(s=>s.trim()).filter(Boolean);return sides.length?['minecraft:brick','minecraft:brick','minecraft:brick','minecraft:brick']:null}, toCmd(p){return this.toJSON(p)} },
+  note_block_sound: { id:'note_block_sound', name:'音符盒音效', category:'deco', icon:'🔔', desc:'放置音符盒时的音效', params:[{type:'select', key:'sound', label:'音效', options:SOUNDS.map(s=>({value:s,label:s.replace('minecraft:','').replace(/block\.note_block\./,'')})), default:'minecraft:block.note_block.harp'}], toJSON(p){return p.sound||null}, toCmd(p){return this.toJSON(p)} },
+
+  // ===== ENTITY =====
+  entity_data: { id:'entity_data', name:'实体数据(刷怪蛋)', category:'entity', icon:'🥚', desc:'生成实体时携带的数据(JSON)', params:[{type:'textarea', key:'data', label:'实体数据JSON', desc:'如 {"id":"minecraft:creeper","powered":true}', default:'{}'}], toJSON(p){try{return JSON.parse(p.data||'{}')}catch(e){return null}}, toCmd(p){return this.toJSON(p)} },
+  bucket_entity_data: { id:'bucket_entity_data', name:'桶装实体数据', category:'entity', icon:'🪣', desc:'鱼桶中的实体数据', params:[{type:'textarea', key:'data', label:'实体数据JSON', default:'{}'}], toJSON(p){try{return JSON.parse(p.data||'{}')}catch(e){return null}}, toCmd(p){return this.toJSON(p)} },
+  block_entity_data: { id:'block_entity_data', name:'方块实体数据', category:'entity', icon:'🧊', desc:'放置方块时携带的方块实体数据', params:[{type:'textarea', key:'data', label:'方块实体数据JSON', default:'{}'}], toJSON(p){try{return JSON.parse(p.data||'{}')}catch(e){return null}}, toCmd(p){return this.toJSON(p)} },
+  profile: { id:'profile', name:'玩家头颅皮肤', category:'entity', icon:'👤', desc:'玩家头颅的皮肤数据', params:[{type:'text', key:'name', label:'玩家名', desc:'输入玩家名自动获取皮肤', default:''}], toJSON(p){return p.name?{name:p.name}:null}, toCmd(p){return this.toJSON(p)} },
+
+  // ===== SPECIAL =====
+  fireworks: { id:'fireworks', name:'烟花火箭', category:'special', icon:'🎆', desc:'烟花火箭属性', params:[{type:'number', key:'flight_duration', label:'飞行时长(1-3)', min:1, max:3, default:1}], toJSON(p){return{flight_duration:Number(p.flight_duration)||1,explosions:[]}}, toCmd(p){return this.toJSON(p)} },
+  firework_explosion: { id:'firework_explosion', name:'烟花爆炸效果', category:'special', icon:'💥', desc:'烟花之星的爆炸效果', params:[{type:'select', key:'shape', label:'形状', options:FIREWORK_SHAPES.map(s=>({value:s,label:s})), default:'small_ball'},{type:'text', key:'colors', label:'颜色(逗号分隔RGB)', desc:'如 16711680,255 红色', default:'16711680'},{type:'text', key:'fade_colors', label:'渐褪色(逗号分隔RGB)', desc:'可选', default:''},{type:'checkbox', key:'trail', label:'轨迹', default:false},{type:'checkbox', key:'twinkle', label:'闪烁', default:false}], toJSON(p){const colors=String(p.colors||'16711680').split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));const fade=String(p.fade_colors||'').split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));return{shape:p.shape||'small_ball',colors:colors.length?colors:[16711680],fade_colors:fade.length?fade:[],trail:!!p.trail,twinkle:!!p.twinkle}}, toCmd(p){return this.toJSON(p)} },
+  suspicious_stew_effects: { id:'suspicious_stew_effects', name:'迷之炖菜效果', category:'special', icon:'🥣', params:[{type:'list_effect', key:'effects', label:'状态效果', default:[]}], toJSON(p){if(!p.effects||!p.effects.length)return null;return p.effects.map(e=>({id:e.id||'minecraft:speed',duration:Number(e.duration)||100})).filter(e=>e.id)}, toCmd(p){return this.toJSON(p)} },
+  instrument: { id:'instrument', name:'山羊角乐器', category:'special', icon:'📯', params:[{type:'select', key:'instrument', label:'乐器', options:INSTRUMENTS.map(i=>({value:i,label:i.replace('minecraft:','').replace('_goat_horn','')})), default:'minecraft:ponder_goat_horn'}], toJSON(p){return p.instrument||null}, toCmd(p){return this.toJSON(p)} },
+  writable_book_content: { id:'writable_book_content', name:'书与笔内容', category:'special', icon:'📝', params:[{type:'dynlist_text', key:'pages', label:'页面', desc:'每行一页', default:['']}], toJSON(p){if(!p.pages||!p.pages.length)return null;return{pages:p.pages.filter(l=>l.trim()).map(l=>({text:l}))}}, toCmd(p){return this.toJSON(p)} },
+  written_book_content: { id:'written_book_content', name:'成书内容', category:'special', icon:'📕', params:[{type:'text', key:'title', label:'标题', default:''},{type:'text', key:'author', label:'作者', default:''},{type:'dynlist_text', key:'pages', label:'页面', default:['']}], toJSON(p){if(!p.title||!p.author)return null;return{title:p.title,author:p.author,pages:(p.pages||[]).filter(l=>l.trim()).map(l=>({text:l}))}}, toCmd(p){return this.toJSON(p)} },
+  lodestone_tracker: { id:'lodestone_tracker', name:'磁石追踪', category:'special', icon:'🧲', desc:'磁石指南针的追踪信息', params:[{type:'text', key:'dimension', label:'维度', desc:'如 minecraft:overworld', default:'minecraft:overworld'},{type:'checkbox', key:'tracked', label:'追踪', default:true}], toJSON(p){return{target:{},dimension:p.dimension||'minecraft:overworld',tracked:p.tracked!==false}}, toCmd(p){return this.toJSON(p)} },
+  death_protection: { id:'death_protection', name:'不死图腾保护', category:'special', icon:'🧿', desc:'不死图腾的死亡保护效果', params:[], special:'flag', toJSON(){return{}}, toCmd(){return{}} },
+  jukebox_playable: { id:'jukebox_playable', name:'唱片机播放', category:'special', icon:'🎵', desc:'物品可作为唱片在唱片机播放', params:[{type:'text', key:'song', label:'歌曲ID', desc:'如 minecraft:13', default:'minecraft:13'},{type:'checkbox', key:'show_in_tooltip', label:'在提示框中显示', default:true}], toJSON(p){return p.song?{song:p.song,show_in_tooltip:p.show_in_tooltip!==false}:null}, toCmd(p){return this.toJSON(p)} },
+  intangible_projectile: { id:'intangible_projectile', name:'无形投射物', category:'special', icon:'👻', desc:'投射物无实体碰撞', params:[], special:'flag', toJSON(){return{}}, toCmd(){return{}} },
+  break_sound: { id:'break_sound', name:'破坏音效', category:'special', icon:'💔', desc:'物品损坏时的音效', params:[{type:'text', key:'sound', label:'音效ID', default:'minecraft:entity.item.break'}], toJSON(p){return p.sound||null}, toCmd(p){return this.toJSON(p)} },
+  recovery_compass: { id:'recovery_compass', name:'追溯指针', category:'special', icon:'🧭', desc:'追溯指针的目标位置', params:[{type:'text', key:'dimension', label:'维度', default:'minecraft:overworld'},{type:'text', key:'position', label:'位置JSON', desc:'如 {"x":100,"y":64,"z":200}', default:'{}'}], toJSON(p){let pos={};try{pos=JSON.parse(p.position||'{}')}catch(e){}return{position:pos,dimension:p.dimension||'minecraft:overworld'}}, toCmd(p){return this.toJSON(p)} },
+};
+
+// ===== STATE =====
+let workspaceBlocks = [];
+let outputTab = 'command';
+
+function getBaseItem(){
+  const customVal = document.getElementById('itemCustomInput').value.trim();
+  const selectVal = document.getElementById('itemSelect').value;
+  return customVal || selectVal || 'minecraft:diamond_sword';
+}
+function getBaseConfig(){
+  return {
+    item: getBaseItem(),
+    target: document.getElementById('targetSelector').value,
+    count: parseInt(document.getElementById('itemCount').value) || 1,
+    includePrefix: document.getElementById('includeCmdPrefix').checked
+  };
+}
+
+// ===== PALETTE =====
+function renderPalette(){
+  const catKeys = Object.keys(CATEGORIES);
+  const tabsEl = document.getElementById('paletteTabs');
+  tabsEl.innerHTML = catKeys.map(c =>
+    `<button class="palette-tab" data-cat="${c}" onclick="switchPaletteTab('${c}')">${CATEGORIES[c].icon} ${CATEGORIES[c].name}</button>`
+  ).join('');
+  if(!document.querySelector('.palette-tab.active')){
+    document.querySelector('.palette-tab')?.classList.add('active');
+  }
+  renderPaletteContent(catKeys[0]);
+}
+function switchPaletteTab(catId){
+  document.querySelectorAll('.palette-tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===catId));
+  renderPaletteContent(catId);
+}
+function renderPaletteContent(catId){
+  const el = document.getElementById('paletteContent');
+  const defs = Object.values(COMPONENT_DEFS).filter(d => d.category === catId);
+  const cat = CATEGORIES[catId];
+  el.innerHTML = defs.map(d => `
+    <div class="palette-item" draggable="true"
+         data-component-id="${d.id}"
+         ondragstart="onPaletteDragStart(event,'${d.id}')"
+         onclick="addBlockToWorkspace('${d.id}')"
+         style="border-left:3px solid ${cat.color}">
+      <span class="item-icon">${d.icon}</span>
+      <span class="item-name">${d.name}</span>
+      <button class="plus-btn" onclick="event.stopPropagation();addBlockToWorkspace('${d.id}')">+</button>
+    </div>
+  `).join('');
+}
+
+// ===== WORKSPACE RENDER =====
+function renderWorkspace(){
+  const listEl = document.getElementById('blockList');
+  const hintEl = document.getElementById('workspaceHint');
+  if(workspaceBlocks.length === 0){
+    hintEl.style.display = 'flex';
+    listEl.innerHTML = '';
+    updateBlockCount();
+    generateOutput();
+    return;
+  }
+  hintEl.style.display = 'none';
+  listEl.innerHTML = workspaceBlocks.map((block, idx) => {
+    const def = COMPONENT_DEFS[block.componentId];
+    if(!def) return '';
+    const cat = CATEGORIES[def.category];
+    const color = cat ? cat.color : '#666';
+    const isDisabled = block.disabled || false;
+    return `
+      <div class="component-block ${isDisabled?'disabled':''}"
+           data-index="${idx}" draggable="true"
+           ondragstart="onBlockDragStart(event,${idx})"
+           ondragover="onBlockDragOver(event,${idx})"
+           ondrop="onBlockDrop(event,${idx})"
+           ondragend="onBlockDragEnd(event)"
+           style="border-color:${color}">
+        <div class="block-header" style="background:${color}">
+          <span class="drag-handle">⠿</span>
+          <span class="block-icon">${def.icon}</span>
+          <span class="block-name">${def.name}</span>
+          <div class="block-controls">
+            <button class="ctrl-btn toggle ${!isDisabled?'active':''}" onclick="toggleBlock(${idx})" title="启用/禁用">${isDisabled?'○':'●'}</button>
+            <button class="ctrl-btn del" onclick="removeBlock(${idx})" title="删除">✕</button>
+          </div>
+        </div>
+        <div class="block-body">${renderBlockParams(def, block.params || {}, idx)}</div>
+      </div>`;
+  }).join('');
+  updateBlockCount();
+  generateOutput();
+}
+
+function renderBlockParams(def, params, idx){
+  if(def.special === 'flag'){
+    return '<div style="color:#9B8F7A;font-size:10px;padding:4px 0">✅ 此组件为标记型 — 只需添加即可生效</div>';
+  }
+  return def.params.map(p => {
+    const val = params[p.key] !== undefined ? params[p.key] : p.default;
+    return renderParamField(p, val, idx);
+  }).join('');
+}
+
+function renderParamField(p, val, idx){
+  switch(p.type){
+    case 'text': return `<div class="field-row"><label>${p.label}</label><input type="text" value="${escHtml(String(val||''))}" onchange="updateBlockParam(${idx},'${p.key}',this.value)">${p.desc?`<span style="font-size:9px;color:var(--mc-text-dark)">${p.desc}</span>`:''}</div>`;
+    case 'richtext': {
+      const summary = Array.isArray(val) ? val.map(s=>s.text).join('') : (val||'');
+      const preview = summary ? escHtml(summary.substring(0, 40))+(summary.length>40?'…':'') : '<span style="color:#6B6050;font-style:italic">未设置</span>';
+      return `<div class="field-row" style="flex-direction:column;align-items:stretch"><label>${p.label}</label><div style="display:flex;gap:8px;align-items:center"><span style="flex:1;font-size:11px;color:var(--mc-text-dim);padding:5px 10px;background:#141414;border-radius:2px;border:1px solid #3A3A3A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span><button class="dyn-add-btn" onclick="openRichTextEditor(${idx},'${p.key}')" style="white-space:nowrap">✏️ 编辑</button></div>${p.desc?`<span style="font-size:9px;color:var(--mc-text-dark);margin-top:3px">${p.desc}</span>`:''}</div>`;
+    }
+    case 'number': return `<div class="field-row"><label>${p.label}</label><input type="number" value="${val}" min="${p.min||0}" max="${p.max||999999}" step="${p.step||1}" onchange="updateBlockParam(${idx},'${p.key}',parseFloat(this.value)||0)"></div>`;
+    case 'checkbox': return `<div class="checkbox-row"><input type="checkbox" ${val?'checked':''} onchange="updateBlockParam(${idx},'${p.key}',this.checked)"><label>${p.label}</label></div>`;
+    case 'select': return `<div class="field-row"><label>${p.label}</label><select onchange="updateBlockParam(${idx},'${p.key}',this.value)">${p.options.map(o => `<option value="${o.value}" ${String(val)===String(o.value)?'selected':''}>${o.label}</option>`).join('')}</select></div>`;
+    case 'textarea': return `<div class="field-row" style="flex-direction:column;align-items:stretch"><label style="margin-bottom:3px">${p.label}</label><textarea onchange="updateBlockParam(${idx},'${p.key}',this.value)" rows="3">${escHtml(String(val||p.default||''))}</textarea>${p.desc?`<div class="field-desc">${p.desc}</div>`:''}</div>`;
+    case 'dynlist_text': return renderDynlistText(p, val, idx);
+    case 'dynlist_richtext': return renderDynlistRichtext(p, val, idx);
+    case 'kvlist_ench': return renderKvlistEnch(p, val, idx);
+    case 'list_attr': return renderAttrList(p, val, idx);
+    case 'list_item': return renderListItem(p, val, idx);
+    case 'list_banner': return renderBannerList(p, val, idx);
+    case 'list_effect': return renderEffectList(p, val, idx);
+    default: return '<div style="color:#9B8F7A;font-size:10px">未知参数类型</div>';
+  }
+}
+
+function renderDynlistText(p, val, idx){
+  const items = Array.isArray(val) && val.length ? val : [''];
+  return `<div class="dyn-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>${items.map((v,i)=>`<div class="dyn-item"><input type="text" value="${escHtml(v)}" onchange="updateDynlistItem(${idx},'${p.key}',${i},this.value)"><button class="dyn-del" onclick="removeDynlistItem(${idx},'${p.key}',${i})">✕</button></div>`).join('')}<button class="dyn-add-btn" onclick="addDynlistItem(${idx},'${p.key}')">+ 添加</button>${p.desc?`<div class="field-desc">${p.desc}</div>`:''}</div>`;
+}
+function renderDynlistRichtext(p, val, idx){
+  const items=Array.isArray(val)&&val.length?val:[[{text:''}]];
+  return `<div class="dyn-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>${items.map((v,i)=>{
+    const txt=Array.isArray(v)?v.map(s=>s.text||'').join(''):'';
+    const preview=txt?escHtml(txt.substring(0,28))+(txt.length>28?'…':''):'<span style="color:#6B6050;font-style:italic">空</span>';
+    return `<div class="dyn-item"><span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${preview}</span><button class="ctrl-btn" onclick="editLoreLine(${idx},${i})" title="编辑" style="font-size:10px;width:22px;height:22px">✏️</button><button class="dyn-del" onclick="removeLoreLine(${idx},${i})">✕</button></div>`;
+  }).join('')}<button class="dyn-add-btn" onclick="addLoreLine(${idx})">+ 添加描述行</button>${p.desc?`<div class="field-desc">${p.desc}</div>`:''}</div>`;
+}
+
+function renderKvlistEnch(p, val, idx){
+  const items = Array.isArray(val) && val.length ? val : [{key:'sharpness',val:1}];
+  return `<div class="kv-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>${items.map((v,i)=>`<div class="kv-item"><select class="kv-key" style="flex:1;min-width:120px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'key',this.value)">${ENCHANTMENTS_DATA.map(e=>`<option value="${e.id}" ${v.key===e.id?'selected':''}>${e.name} (${e.id})</option>`).join('')}</select><input class="kv-val" type="number" value="${v.val||1}" min="1" max="255" onchange="updateKvlistItem(${idx},'${p.key}',${i},'val',parseInt(this.value)||1)" style="width:55px"><button class="kv-del" onclick="removeKvlistItem(${idx},'${p.key}',${i})">✕</button></div>`).join('')}<button class="kv-add-btn" onclick="addKvlistItem(${idx},'${p.key}','sharpness',1)">+ 添加附魔</button>${p.desc?`<div class="field-desc">${p.desc}</div>`:''}</div>`;
+}
+
+function renderAttrList(p, val, idx){
+  const items = Array.isArray(val) ? val : [];
+  let html = `<div class="kv-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>`;
+  items.forEach((v,i)=>{html+=`<div class="kv-item" style="flex-wrap:wrap;padding:5px"><select class="kv-key" style="flex:1;min-width:100px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'type',this.value)">${ATTRIBUTES.map(a=>`<option value="${a}" ${v.type===a?'selected':''}>${a.replace('minecraft:','')}</option>`).join('')}</select><input type="text" value="${escHtml(v.name||'')}" placeholder="名称" style="width:70px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'name',this.value)"><input type="number" value="${v.amount||0}" placeholder="数值" style="width:55px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'amount',parseFloat(this.value)||0)"><select style="width:85px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'operation',this.value)"><option value="add_value" ${v.operation==='add_value'?'selected':''}>+加值</option><option value="add_multiplied_base" ${v.operation==='add_multiplied_base'?'selected':''}>+倍率基值</option><option value="add_multiplied_total" ${v.operation==='add_multiplied_total'?'selected':''}>+倍率总值</option></select><select style="width:65px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'slot',this.value)"><option value="any" ${v.slot==='any'?'selected':''}>any</option>${ARMOR_SLOTS.map(s=>`<option value="${s}" ${v.slot===s?'selected':''}>${s}</option>`).join('')}</select><label style="font-size:9px;color:var(--mc-text-dim);white-space:nowrap"><input type="checkbox" ${v.show_in_tooltip!==false?'checked':''} onchange="updateKvlistItem(${idx},'${p.key}',${i},'show_in_tooltip',this.checked)">显示</label><button class="kv-del" onclick="removeKvlistItem(${idx},'${p.key}',${i})">✕</button></div>`});
+  html += `<button class="kv-add-btn" onclick="addAttrItem(${idx},'${p.key}')">+ 添加属性修饰符</button></div>`;
+  return html;
+}
+
+function renderListItem(p, val, idx){
+  const items = Array.isArray(val) ? val : [];
+  let html = `<div class="kv-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>`;
+  items.forEach((v,i)=>{html+=`<div class="kv-item"><input class="kv-key" type="text" value="${escHtml(v.id||'minecraft:stone')}" placeholder="物品ID" style="flex:1" onchange="updateKvlistItem(${idx},'${p.key}',${i},'id',this.value)"><input class="kv-val" type="number" value="${v.count||1}" min="1" max="99" style="width:50px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'count',parseInt(this.value)||1)"><button class="kv-del" onclick="removeKvlistItem(${idx},'${p.key}',${i})">✕</button></div>`});
+  html += `<button class="kv-add-btn" onclick="addListItem(${idx},'${p.key}')">+ 添加物品</button></div>`;
+  return html;
+}
+
+function renderBannerList(p, val, idx){
+  const items = Array.isArray(val) ? val : [];
+  let html = `<div class="kv-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>`;
+  items.forEach((v,i)=>{html+=`<div class="kv-item"><select style="flex:1" onchange="updateKvlistItem(${idx},'${p.key}',${i},'pattern',this.value)">${BANNER_PATTERNS.map(b=>`<option value="${b.id}" ${v.pattern===b.id?'selected':''}>${b.name}</option>`).join('')}</select><select style="width:75px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'color',this.value)">${DYE_COLORS.map(c=>`<option value="${c}" ${v.color===c?'selected':''}>${c.replace('minecraft:','')}</option>`).join('')}</select><button class="kv-del" onclick="removeKvlistItem(${idx},'${p.key}',${i})">✕</button></div>`});
+  html += `<button class="kv-add-btn" onclick="addBannerItem(${idx},'${p.key}')">+ 添加图案</button></div>`;
+  return html;
+}
+
+function renderEffectList(p, val, idx){
+  const items = Array.isArray(val) ? val : [];
+  let html = `<div class="kv-list"><div style="margin-bottom:3px;font-size:10px;color:var(--mc-text-dim)">${p.label}</div>`;
+  items.forEach((v,i)=>{html+=`<div class="kv-item"><select style="flex:1" onchange="updateKvlistItem(${idx},'${p.key}',${i},'id',this.value)">${EFFECTS.map(e=>`<option value="${e}" ${v.id===e?'selected':''}>${e.replace('minecraft:','')}</option>`).join('')}</select><input type="number" value="${v.duration||100}" placeholder="时长(tick)" style="width:70px" onchange="updateKvlistItem(${idx},'${p.key}',${i},'duration',parseInt(this.value)||100)"><input type="number" value="${v.amplifier||0}" placeholder="等级" style="width:45px" min="0" max="255" onchange="updateKvlistItem(${idx},'${p.key}',${i},'amplifier',parseInt(this.value)||0)"><button class="kv-del" onclick="removeKvlistItem(${idx},'${p.key}',${i})">✕</button></div>`});
+  html += `<button class="kv-add-btn" onclick="addEffectItem(${idx},'${p.key}')">+ 添加效果</button></div>`;
+  return html;
+}
+
+// ===== BLOCK ACTIONS =====
+function addBlockToWorkspace(componentId){
+  const def = COMPONENT_DEFS[componentId];
+  if(!def) return;
+  const params = {};
+  if(def.params){
+    def.params.forEach(p => {
+      if(p.type === 'dynlist_text') params[p.key] = [...(p.default||[''])];
+      else if(p.type === 'dynlist_richtext') params[p.key] = p.default ? p.default.map(d=>[...d]) : [];
+      else if(p.type === 'kvlist_ench') params[p.key] = p.default ? p.default.map(d=>({...d})) : [];
+      else if(p.type === 'list_attr' || p.type === 'list_item' || p.type === 'list_banner' || p.type === 'list_effect') params[p.key] = [];
+      else params[p.key] = p.default;
+    });
+  }
+  workspaceBlocks.push({ componentId, params, disabled: false });
+  showToast(`已添加: ${def.icon} ${def.name}`, 'success');
+  renderWorkspace();
+  setTimeout(()=>{document.getElementById('workspaceArea').scrollTop = document.getElementById('workspaceArea').scrollHeight;}, 50);
+}
+
+function removeBlock(idx){
+  const block = workspaceBlocks[idx];
+  if(!block) return;
+  const def = COMPONENT_DEFS[block.componentId];
+  workspaceBlocks.splice(idx, 1);
+  showToast(`已移除: ${def?def.icon+def.name:'组件'}`, 'info');
+  renderWorkspace();
+}
+
+function toggleBlock(idx){
+  if(workspaceBlocks[idx]){ workspaceBlocks[idx].disabled = !workspaceBlocks[idx].disabled; renderWorkspace(); }
+}
+function toggleAllBlocks(){
+  const allDisabled = workspaceBlocks.every(b => b.disabled);
+  workspaceBlocks.forEach(b => b.disabled = !allDisabled);
+  renderWorkspace();
+}
+function clearWorkspace(){
+  if(workspaceBlocks.length === 0) return;
+  if(!confirm('确定清空所有组件吗？')) return;
+  workspaceBlocks = [];
+  renderWorkspace();
+  showToast('已清空工作区', 'info');
+}
+
+// ===== PARAM UPDATES =====
+function updateBlockParam(idx, key, value){
+  if(workspaceBlocks[idx]){ workspaceBlocks[idx].params[key] = value; generateOutput(); }
+}
+function updateDynlistItem(idx, key, itemIdx, value){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key][itemIdx] = value; generateOutput(); }
+}
+function addDynlistItem(idx, key){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key].push(''); renderWorkspace(); }
+}
+function removeDynlistItem(idx, key, itemIdx){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){
+    const arr = workspaceBlocks[idx].params[key];
+    if(arr.length > 1) arr.splice(itemIdx, 1);
+    else arr[0] = '';
+    renderWorkspace();
+  }
+}
+function editLoreLine(blockIdx,lineIdx){
+  const block=workspaceBlocks[blockIdx];
+  if(!block) return;
+  const segs=block.params.lines?.[lineIdx];
+  _rtState={blockIdx,paramKey:'lines',paramIdx:lineIdx,segments:segs&&Array.isArray(segs)?segs.map(s=>({...s})):[{text:''}]};
+  renderRichTextModal();
+}
+function addLoreLine(idx){
+  if(workspaceBlocks[idx]){ if(!workspaceBlocks[idx].params.lines) workspaceBlocks[idx].params.lines=[]; workspaceBlocks[idx].params.lines.push([{text:''}]); renderWorkspace(); }
+}
+function removeLoreLine(idx,lineIdx){
+  if(workspaceBlocks[idx]&&workspaceBlocks[idx].params.lines){
+    if(workspaceBlocks[idx].params.lines.length>1) workspaceBlocks[idx].params.lines.splice(lineIdx,1);
+    else workspaceBlocks[idx].params.lines[0]=[{text:''}];
+    generateOutput(); renderWorkspace();
+  }
+}
+function updateKvlistItem(idx, key, itemIdx, subKey, value){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){
+    if(!workspaceBlocks[idx].params[key][itemIdx]) workspaceBlocks[idx].params[key][itemIdx] = {};
+    workspaceBlocks[idx].params[key][itemIdx][subKey] = value;
+    generateOutput();
+  }
+}
+function addKvlistItem(idx, key, defaultKey, defaultVal){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key].push({key:defaultKey||'', val:defaultVal||1}); renderWorkspace(); }
+}
+function removeKvlistItem(idx, key, itemIdx){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){
+    if(workspaceBlocks[idx].params[key].length > 1) workspaceBlocks[idx].params[key].splice(itemIdx, 1);
+    else workspaceBlocks[idx].params[key][0] = {key:'',val:1};
+    renderWorkspace();
+  }
+}
+function addAttrItem(idx, key){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key].push({type:'minecraft:generic.attack_damage',name:'',amount:0,operation:'add_value',slot:'any',show_in_tooltip:true}); renderWorkspace(); }
+}
+function addListItem(idx, key){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key].push({id:'minecraft:stone', count:1}); renderWorkspace(); }
+}
+function addBannerItem(idx, key){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key].push({pattern:'minecraft:square_bottom_left',color:'minecraft:white'}); renderWorkspace(); }
+}
+function addEffectItem(idx, key){
+  if(workspaceBlocks[idx] && workspaceBlocks[idx].params[key]){ workspaceBlocks[idx].params[key].push({id:'minecraft:speed',duration:100,amplifier:0}); renderWorkspace(); }
+}
+
+// ===== DRAG & DROP =====
+let dragSourceType = null, dragData = null, dragOverIdx = -1;
+
+function onPaletteDragStart(e, componentId){
+  dragSourceType='palette'; dragData=componentId;
+  e.dataTransfer.effectAllowed='copy'; e.dataTransfer.setData('text/plain',componentId);
+  const def=COMPONENT_DEFS[componentId];
+  const overlay=document.createElement('div'); overlay.className='drag-overlay';
+  overlay.textContent=`${def?def.icon+' '+def.name:componentId}`;
+  overlay.style.background=def?CATEGORIES[def.category]?.color||'#666':'#666';
+  document.body.appendChild(overlay);
+  e.dataTransfer.setDragImage(overlay,30,20);
+  setTimeout(()=>overlay.remove(),0);
+}
+function onBlockDragStart(e, idx){
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'){ e.preventDefault(); return; }
+  dragSourceType='block'; dragData=idx; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',String(idx)); e.target.classList.add('dragging-source');
+}
+function onBlockDragOver(e, idx){ e.preventDefault(); e.dataTransfer.dropEffect=dragSourceType==='palette'?'copy':'move'; dragOverIdx=idx; }
+function onBlockDragEnd(e){ e.target.classList.remove('dragging-source'); document.querySelectorAll('.drop-zone-highlight').forEach(el=>el.classList.remove('drop-zone-highlight')); }
+function onBlockDrop(e, idx){
+  e.preventDefault(); e.stopPropagation();
+  e.target.classList.remove('dragging-source');
+  document.querySelectorAll('.drop-zone-highlight').forEach(el=>el.classList.remove('drop-zone-highlight'));
+  if(dragSourceType==='palette'&&dragData) addBlockToWorkspace(dragData);
+  else if(dragSourceType==='block'&&typeof dragData==='number'&&dragData!==idx){
+    const [moved]=workspaceBlocks.splice(dragData,1);
+    const targetIdx=dragData<idx?idx-1:idx;
+    workspaceBlocks.splice(Math.min(targetIdx,workspaceBlocks.length),0,moved);
+    renderWorkspace();
+    showToast('已重新排序','info');
+  }
+  dragSourceType=null; dragData=null; dragOverIdx=-1;
+}
+function onWorkspaceDragOver(e){
+  e.preventDefault();
+  if(dragSourceType==='palette'){
+    const hint=document.getElementById('workspaceHint');
+    hint.style.display='flex'; hint.style.border='2px dashed var(--mc-green)'; hint.style.borderRadius='4px'; hint.style.background='rgba(94,124,22,.08)';
+  }
+}
+function onWorkspaceDrop(e){
+  e.preventDefault();
+  const hint=document.getElementById('workspaceHint');
+  hint.style.border=''; hint.style.background='';
+  if(dragSourceType==='palette'&&dragData) addBlockToWorkspace(dragData);
+  dragSourceType=null; dragData=null;
+}
+
+// ===== OUTPUT GENERATION =====
+function generateOutput(){
+  const outputPre=document.getElementById('outputPre');
+  const placeholder=document.querySelector('#outputContent .placeholder');
+  const errorEl=document.getElementById('outputError');
+  const config=getBaseConfig();
+  const jsonComponents=buildComponentsJSON();
+  placeholder.style.display='none'; outputPre.style.display='block'; errorEl.style.display='none';
+  try{
+    if(outputTab==='command'){
+      const cmd=buildGiveCommand(config,jsonComponents);
+      outputPre.textContent=cmd;
+      document.getElementById('outputCharCount').textContent=`${cmd.length} 字符`;
+    } else {
+      const json=Object.keys(jsonComponents).length?JSON.stringify(jsonComponents,null,2):'{ /* 暂无组件 */ }';
+      outputPre.textContent=json;
+      document.getElementById('outputCharCount').textContent=`${json.length} 字符`;
+    }
+  } catch(e){
+    errorEl.textContent='生成输出时出错: '+e.message;
+    errorEl.style.display='block';
+    outputPre.textContent='';
+  }
+}
+
+function buildComponentsJSON(){
+  const result={};
+  workspaceBlocks.forEach(block=>{
+    if(block.disabled) return;
+    const def=COMPONENT_DEFS[block.componentId];
+    if(!def) return;
+    try{ const jsonVal=def.toJSON(block.params); if(jsonVal!==null&&jsonVal!==undefined) result[block.componentId]=jsonVal; }catch(e){}
+  });
+  const namespaced={};
+  Object.entries(result).forEach(([key,val])=>{ namespaced['minecraft:'+key]=val; });
+  return namespaced;
+}
+
+function buildGiveCommand(config,components){
+  const itemStr=config.item, target=config.target||'@p', count=config.count||1;
+  if(!components||!Object.keys(components).length) return `${config.includePrefix?'/give ':''}${target} ${itemStr}${count>1?' '+count:''}`;
+  const compParts=[];
+  Object.entries(components).forEach(([key,val])=>{ compParts.push(commandComponentString(key,val)); });
+  return `${config.includePrefix?'/give ':''}${target} ${itemStr}[${compParts.join(',')}]${count>1?' '+count:''}`;
+}
+
+function commandComponentString(key,val){
+  if(val===null||val===undefined) return '';
+  if(typeof val==='boolean') return val?key:key+'=false';
+  if(typeof val==='number') return key+'='+val;
+  if(typeof val==='string') return key+'='+JSON.stringify(val);
+  if(Array.isArray(val)) return key+'='+JSON.stringify(val);
+  if(typeof val==='object') return key+'='+JSON.stringify(val);
+  return key+'='+val;
+}
+
+// ===== OUTPUT UI =====
+function switchOutputTab(tab){
+  outputTab=tab;
+  document.querySelectorAll('.output-tab').forEach(t=>{t.classList.toggle('active',t.dataset.tab===tab);});
+  generateOutput();
+}
+
+function copyOutput(){
+  const text=document.getElementById('outputPre').textContent;
+  if(!text){ showToast('没有可复制的内容','error'); return; }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>showToast('✅ 已复制到剪贴板!','success')).catch(()=>fallbackCopy(text));
+  } else fallbackCopy(text);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea'); ta.value=text;
+  ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+  document.body.removeChild(ta); showToast('✅ 已复制到剪贴板!','success');
+}
+function downloadOutput(){
+  const text=document.getElementById('outputPre').textContent;
+  if(!text){ showToast('没有可下载的内容','error'); return; }
+  const ext=outputTab==='command'?'.mcfunction':'.json';
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`item_components${ext}`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url); showToast('💾 下载成功!','success');
+}
+
+function onBaseItemChange(){ generateOutput(); }
+function onCustomItemInput(){
+  const customInput=document.getElementById('itemCustomInput');
+  const select=document.getElementById('itemSelect');
+  select.disabled=!!customInput.value.trim();
+  generateOutput();
+}
+function updateBlockCount(){
+  const count=workspaceBlocks.filter(b=>!b.disabled).length;
+  const total=workspaceBlocks.length;
+  document.getElementById('blockCount').textContent=`已添加: ${count}/${total} 个组件`;
+}
+
+// ===== TOAST =====
+function showToast(msg,type='info'){
+  const toast=document.getElementById('toast');
+  toast.textContent=msg;
+  toast.className='toast '+type+' show';
+  clearTimeout(toast._timer);
+  toast._timer=setTimeout(()=>toast.classList.remove('show'),2500);
+}
+
+// ===== UTILITY =====
+function escHtml(str){
+  const div=document.createElement('div');
+  div.textContent=str; return div.innerHTML;
+}
+
+// ===== § Color Code → JSON Text Component =====
+const COLOR_MAP={'0':'black','1':'dark_blue','2':'dark_green','3':'dark_aqua','4':'dark_red','5':'dark_purple','6':'gold','7':'gray','8':'dark_gray','9':'blue','a':'green','b':'aqua','c':'red','d':'light_purple','e':'yellow','f':'white'};
+const FORMAT_MAP={'k':'obfuscated','l':'bold','m':'strikethrough','n':'underlined','o':'italic'};
+
+function parseSectionCodes(str){
+  if(!str||typeof str!=='string') return '';
+  if(!str.includes('§')) return {text:str};
+  const segs=[]; let buf=''; let fmt={};
+  for(let i=0;i<str.length;i++){
+    if(str[i]==='§'&&i+1<str.length){
+      const c=str[++i].toLowerCase();
+      if(buf){segs.push({...fmt,text:buf});buf='';}
+      if(c==='r') fmt={};
+      else if(COLOR_MAP[c]) fmt={color:COLOR_MAP[c]};
+      else if(FORMAT_MAP[c]) fmt[FORMAT_MAP[c]]=true;
+    } else buf+=str[i];
+  }
+  if(buf) segs.push({...fmt,text:buf});
+  if(!segs.length) return '';
+  if(segs.length===1) return segs[0];
+  return segs;
+}
+
+function toTextComponent(val,defaultItalic){
+  if(!val) return null;
+  let segs;
+  if(Array.isArray(val)){
+    segs=val.filter(s=>s.text).map(s=>{
+      const tc={text:s.text};
+      if(s.color) tc.color=s.color;
+      if(s.bold) tc.bold=true;
+      if(s.italic) tc.italic=true;
+      else if(defaultItalic) tc.italic=false;
+      if(s.underlined) tc.underlined=true;
+      if(s.strikethrough) tc.strikethrough=true;
+      if(s.obfuscated) tc.obfuscated=true;
+      return tc;
+    });
+  } else if(typeof val==='string'){
+    const p=parseSectionCodes(val);
+    if(p==='') return null;
+    if(Array.isArray(p)) segs=p.map(s=>{if(defaultItalic&&s.italic!==false)s.italic=true;return s;});
+    else{if(defaultItalic)p.italic=true;segs=[p];}
+  }
+  if(!segs||!segs.length) return null;
+  if(segs.length===1) return segs[0];
+  return segs;
+}
+
+// ===== RICH TEXT EDITOR =====
+let _rtState=null;
+const MC_COLORS=[
+  {value:'',label:'默认'},{value:'black',label:'§0 黑色'},{value:'dark_blue',label:'§1 深蓝'},
+  {value:'dark_green',label:'§2 深绿'},{value:'dark_aqua',label:'§3 深青'},{value:'dark_red',label:'§4 深红'},
+  {value:'dark_purple',label:'§5 深紫'},{value:'gold',label:'§6 金色'},{value:'gray',label:'§7 灰色'},
+  {value:'dark_gray',label:'§8 深灰'},{value:'blue',label:'§9 蓝色'},{value:'green',label:'§a 绿色'},
+  {value:'aqua',label:'§b 青色'},{value:'red',label:'§c 红色'},{value:'light_purple',label:'§d 淡紫'},
+  {value:'yellow',label:'§e 黄色'},{value:'white',label:'§f 白色'}
+];
+const FORMAT_BTNS=[
+  {key:'bold',label:'B',title:'加粗'},{key:'italic',label:'I',title:'斜体'},
+  {key:'underlined',label:'U',title:'下划线'},{key:'strikethrough',label:'S',title:'删除线'},
+  {key:'obfuscated',label:'K',title:'混淆'}
+];
+
+function getDefaultSegments(){return[{text:'',color:'',bold:false,italic:false,underlined:false,strikethrough:false,obfuscated:false}];}
+function segsFromValue(val){
+  if(Array.isArray(val)&&val.length) return val.map(s=>({...getDefaultSegments()[0],...s}));
+  if(typeof val==='string'&&val){
+    const p=parseSectionCodes(val);
+    if(p==='') return getDefaultSegments();
+    const arr=Array.isArray(p)?p:[p];
+    return arr.map(s=>({...getDefaultSegments()[0],text:s.text||'',color:s.color||'',bold:!!s.bold,italic:!!s.italic,underlined:!!s.underlined,strikethrough:!!s.strikethrough,obfuscated:!!s.obfuscated}));
+  }
+  return getDefaultSegments();
+}
+
+function openRichTextEditor(blockIdx,paramKey){
+  const block=workspaceBlocks[blockIdx];
+  if(!block) return;
+  _rtState={blockIdx,paramKey,segments:segsFromValue(block.params[paramKey])};
+  renderRichTextModal();
+}
+function closeRichTextEditor(){_rtState=null;const el=document.getElementById('rtOverlay');if(el)el.remove();}
+function saveRichTextEditor(){
+  if(!_rtState) return;
+  const{blockIdx,paramKey,paramIdx,segments}=_rtState;
+  const clean=segments.filter(s=>s.text&&s.text.trim());
+  if(paramIdx!==undefined){
+    if(!workspaceBlocks[blockIdx].params[paramKey]) workspaceBlocks[blockIdx].params[paramKey]=[];
+    workspaceBlocks[blockIdx].params[paramKey][paramIdx]=clean.length?clean.map(s=>({...s})):[{text:''}];
+  } else {
+    workspaceBlocks[blockIdx].params[paramKey]=clean.length?clean.map(s=>({...s})):'';
+  }
+  closeRichTextEditor(); renderWorkspace();
+}
+
+function renderRichTextModal(){
+  const existing=document.getElementById('rtOverlay'); if(existing)existing.remove();
+  const segs=_rtState.segments;
+  const segHtml=segs.map((s,i)=>`
+    <div class="rt-segment">
+      <div class="rt-seg-header"><span class="rt-seg-label">段落 ${i+1}</span><button class="rt-seg-del" onclick="removeRtSeg(${i})" ${segs.length<=1?'style="display:none"':''}>✕ 删除</button></div>
+      <div class="rt-seg-row"><input class="rt-seg-text" value="${escHtml(s.text)}" placeholder="输入文本..." onchange="updateRtSeg(${i},'text',this.value)"><select class="rt-seg-color" onchange="updateRtSeg(${i},'color',this.value)">${MC_COLORS.map(c=>`<option value="${c.value}" ${s.color===c.value?'selected':''}>${c.label}</option>`).join('')}</select></div>
+      <div class="rt-format-row">${FORMAT_BTNS.map(f=>`<button class="rt-fmt-btn ${s[f.key]?'active':''}" onclick="toggleRtFmt(${i},'${f.key}')" title="${f.title}">${f.label}</button>`).join('')}</div>
+    </div>`).join('');
+  const previewText=segs.map(s=>s.text||'').join('');
+  const html=`<div class="rt-overlay" id="rtOverlay" onclick="if(event.target===this)closeRichTextEditor()"><div class="rt-modal"><div class="rt-header"><span>✏️ JSON 文本编辑器</span><button class="rt-close-btn" onclick="closeRichTextEditor()">✕</button></div><div class="rt-body">${segHtml}<button class="rt-add-btn" onclick="addRtSeg()">+ 添加段落</button><div class="rt-preview"><div class="rt-preview-label">📖 预览</div><div class="rt-preview-text">${escHtml(previewText)||'<span style="color:#6B6050">空文本</span>'}</div></div></div><div class="rt-footer"><button class="rt-btn rt-btn-cancel" onclick="closeRichTextEditor()">取消</button><button class="rt-btn rt-btn-save" onclick="saveRichTextEditor()">✓ 保存</button></div></div></div>`;
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+function updateRtSeg(idx,field,value){if(_rtState&&_rtState.segments[idx]){_rtState.segments[idx][field]=value;updateRtPreview();}}
+function toggleRtFmt(idx,key){if(_rtState&&_rtState.segments[idx]){_rtState.segments[idx][key]=!_rtState.segments[idx][key];renderRichTextModal();}}
+function addRtSeg(){if(_rtState){_rtState.segments.push({text:'',color:'',bold:false,italic:false,underlined:false,strikethrough:false,obfuscated:false});renderRichTextModal();}}
+function removeRtSeg(idx){if(_rtState&&_rtState.segments.length>1){_rtState.segments.splice(idx,1);renderRichTextModal();}}
+function updateRtPreview(){if(!_rtState)return;const el=document.querySelector('.rt-preview-text');if(el)el.innerHTML=escHtml(_rtState.segments.map(s=>s.text||'').join(''))||'<span style="color:#6B6050">空文本</span>';}
+
+// ===== INIT =====
+renderPalette();
+renderWorkspace();
+</script>
+</body>
+</html>
