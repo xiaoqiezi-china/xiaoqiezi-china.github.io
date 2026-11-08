@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPCL 使用教程 · DST</title>
+<meta name="description" content="DST Plain Craft Launcher（DPCL）使用教程：安装准备、离线功能拓展、存档编辑、地图预览、收藏夹、联机、汉化工具、界面主题与在线功能。">
+<meta name="theme-color" content="#f6f7f9">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/doc.css">
+<script>
+  (function () {
+    var t = localStorage.getItem('dst-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#content">跳到正文</a>
+
+<header class="nav" data-nav>
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 8h14M12 8v10M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      </span>
+      <span class="brand-name">DST</span>
+    </a>
+    <nav class="nav-links" aria-label="导航">
+      <a href="../index.html#about">关于</a>
+      <a href="../index.html#repos">仓库</a>
+      <a href="../index.html" class="nav-cta">返回首页</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+      <span class="theme-icon" data-theme-icon></span>
+    </button>
+  </div>
+</header>
+<div class="read-bar" aria-hidden="true"><i data-read-progress></i></div>
+
+<main id="content" class="doc-wrap">
+  <div class="wrap doc-layout">
+
+    <aside class="doc-toc" aria-label="目录">
+      <p class="toc-title">目录</p>
+      <nav class="toc-list">
+        <a href="#intro" data-toc-link><span class="n">01</span>写在前面</a>
+        <a href="#prepare" data-toc-link><span class="n">02</span>开始使用前</a>
+        <a href="#offline" data-toc-link class="toc-parent"><span class="n">03</span>离线功能拓展</a>
+        <a href="#world" class="toc-sub" data-toc-link><span class="n">03a</span>存档管理</a>
+        <a href="#map" class="toc-sub" data-toc-link><span class="n">03b</span>地图预览</a>
+        <a href="#favorites" data-toc-link><span class="n">04</span>收藏夹</a>
+        <a href="#multiplayer" data-toc-link><span class="n">05</span>联机</a>
+        <a href="#toolbox" data-toc-link><span class="n">06</span>百宝箱</a>
+        <a href="#hanhua" data-toc-link><span class="n">07</span>汉化工具</a>
+        <a href="#ui" data-toc-link><span class="n">08</span>界面与主题</a>
+        <a href="#online" data-toc-link class="toc-parent"><span class="n">09</span>在线功能</a>
+        <a href="#bind" class="toc-sub" data-toc-link><span class="n">09a</span>绑定 QQ</a>
+        <a href="#misc" data-toc-link><span class="n">10</span>其他与致谢</a>
+      </nav>
+    </aside>
+
+    <div class="doc-main">
+      <header class="doc-hero" id="top">
+        <p class="eyebrow" data-reveal>使用教程 · v1.0.9</p>
+        <h1 data-reveal>DPCL · Plain Craft Launcher</h1>
+        <p class="sub" data-reveal>
+          基于 PCL 开源版二次开发的 Minecraft 启动器。这份教程按「打开它、用熟它」的顺序组织，
+          每一节都可以单独阅读，也可以从头到尾走一遍。
+        </p>
+        <div class="doc-tags" data-reveal>
+          <span>Minecraft 启动器</span>
+          <span>PCL 开源版衍生</span>
+          <span>离线可用</span>
+          <span>内置汉化工作台</span>
+        </div>
+      </header>
+
+      <!-- 01 -->
+      <section class="doc-section" id="intro">
+        <div class="doc-section-head"><span class="doc-num">01</span><h2>写在前面</h2></div>
+        <div class="doc-body">
+          <p>
+            DPCL 是基于 PCL 2 在下载风波后开源的 2.99 版本二次开发而来。主体完全由 AI 开发，
+            不保证代码质量，但已尽量不过度修改 PCL 原本的交互逻辑，以维持稳定。
+          </p>
+          <p>
+            它并不是一个正式发布的商业产品，更接近「开源的<strong>学习作品</strong> + 服务器上<strong>勉强够用</strong>的工具」。
+            这决定了它的性格：功能很多，细节偶尔毛糙，但真的能帮你把 Minecraft 玩得更顺手一点。
+          </p>
+          <div class="note accent">
+            <div class="note-inner">
+              <p class="note-title">关于名字</p>
+              <p>
+                PCL 使用自定义开源协议，要求保留赞助渠道与 PCL 名称。DPCL 在第一个正式版时已经确定了名字，
+                因此没有加前缀，但保留了更多的赞助与开发者信息。如果确有版权需要，欢迎通过 issue 或其它方式通知我们。
+              </p>
+            </div>
+          </div>
+          <div class="note">
+            <div class="note-inner">
+              <p class="note-title">DST 是什么</p>
+              <p>DST 是围绕 DST Bot V2 的软件生态。DPCL 最早是在 PCL 出事时为公益服开发的定制启动器，用于查看服务器列表并保证能正常下载，后来在不断的小想法里完善成了正式启动器。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="doc-section" id="prepare">
+        <div class="doc-section-head"><span class="doc-num">02</span><h2>开始使用前</h2></div>
+        <div class="doc-body">
+          <div class="note warn">
+            <div class="note-inner">
+              <p class="note-title">第一步：ClientID 与 CurseForge Key</p>
+              <p>
+                DPCL 的发布版<strong>不内置</strong> ClientID 与 CurseForge Key。ClientID 是微软应用 ID，决定能否登录正版账号；
+                CurseForge Key 用于搜索模组。想完全脱离云端使用，需要自行在设置里填写这两项。
+              </p>
+            </div>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="设置 · 账号与 API">
+              <img src="../assets/shots/settings-api.webp" alt="DPCL 设置页中的下载、账号与 API 选项" loading="lazy" width="1028" height="663">
+            </button>
+            <p class="caption"><b>设置 → 其他</b>：下载源、网络协议，以及「账号与 API」里的微软 ClientID 与 CurseForge Key。</p>
+          </div>
+          <p>普通用户不需要手动填写。只要在下面的位置选择一次<strong>机器人预设群</strong>，就会自动同步 ClientID 与 CurseForge Key 到本地。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="机器人预设">
+              <img src="../assets/shots/settings-bot.webp" alt="DPCL 设置页中的 QQ 群与服务器预设" loading="lazy" width="1028" height="663">
+            </button>
+            <p class="caption"><b>设置 → 机器人</b>：选择一个群作为启动器使用的群，即可同步预设。</p>
+          </div>
+          <p>也欢迎加入我们的服务器。如果哪天服务器没了，可以去找 trop。</p>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="doc-section" id="offline">
+        <div class="doc-section-head"><span class="doc-num">03</span><h2>离线功能拓展</h2></div>
+        <div class="doc-body">
+          <p>DPCL 为版本设置补上了存档、资源包、光影包、截图管理与收藏夹。这不是简单的文件列表，其中大部分都具备不俗的编辑能力。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="版本设置 · 存档管理">
+              <img src="../assets/shots/vset-worlds.webp" alt="版本设置中的存档管理列表" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">版本设置 → 存档管理：支持全部 / 有图标 / 无图标筛选，右键存档即可进入编辑页。</p>
+          </div>
+
+          <h3 id="world" class="sub-head">存档管理<span class="doc-num">03a</span></h3>
+          <p>存档管理是 DPCL 最强大的功能之一。它提供直接读取存档数据的能力，能帮玩家解决一些致命 BUG，也方便地图开发者做高级开发。</p>
+          <p>当前提供五项能力：<strong>世界设置、数据包、区域文件、玩家数据、地图管理</strong>。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="存档详情 · 世界设置">
+              <img src="../assets/shots/world-detail.webp" alt="存档详情页的世界设置" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">世界设置：读取并编辑 <b>level.dat</b>，常见键都提供了便捷的编辑方式。</p>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="存档详情 · 数据包">
+              <img src="../assets/shots/world-datapack.webp" alt="存档的数据包管理" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">数据包：类似模组管理的管理页（制作较早，未完全遵循 PCL 设计，但可正常使用）。</p>
+          </div>
+          <div class="shot-grid">
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="存档详情 · 玩家数据">
+                <img src="../assets/shots/world-playerdata.webp" alt="存档的玩家数据列表" loading="lazy" width="1028" height="573">
+              </button>
+            </div>
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="存档详情 · 原始 NBT">
+                <img src="../assets/shots/player-nbt.webp" alt="玩家 NBT 编辑界面" loading="lazy" width="1028" height="573">
+              </button>
+            </div>
+          </div>
+          <p class="caption" style="margin-top:-4px">玩家数据：可编辑玩家 NBT，提供物品栏、末影箱的易用编辑，也可直接编辑原始 NBT。整合包有大量自定义 NBT 时尤其实用。</p>
+          <p>通过对玩家数据的编辑，可以解决<strong>生命值 NaN</strong> 之类的问题。区域文件功能目前能力较弱，未来计划加入直接的方块编辑。</p>
+
+          <h3 id="map" class="sub-head">地图预览<span class="doc-num">03b</span></h3>
+          <p>这是 DPCL 较重磅的功能：直接读取地图文件，在游戏外渲染世界地图。适合分享或记录自己的世界，而且不受游戏内地图的预览范围限制。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="渲染世界地图">
+              <img src="../assets/shots/world-mapdialog.webp" alt="渲染世界地图的设置对话框" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">渲染设置：选择维度与范围，读取区块数据后画出俯视图。</p>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="地图预览结果">
+              <img src="../assets/shots/world-map.webp" alt="渲染后的世界地图俯视图" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">渲染结果：鼠标悬停可查看坐标与方块信息。</p>
+          </div>
+          <div class="note">
+            <div class="note-inner">
+              <p class="note-title">坦率地说</p>
+              <p>虽然不想承认，但这更像是一个「不实用的有趣功能」：较大范围渲染会极度耗时。已知 BUG 仍有两处：水体渲染异常，以及右键补渲染异常（错误地使用了旧渲染引擎，在没有高度数据时无法正确补充渲染）。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 -->
+      <section class="doc-section" id="favorites">
+        <div class="doc-section-head"><span class="doc-num">04</span><h2>收藏夹</h2></div>
+        <div class="doc-body">
+          <p>方便玩家快速安装喜爱的辅助模组，也方便整合包作者快速安装必备模组。不局限于模组，大部分资源都能被收藏，还能与朋友分享。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="收藏夹">
+              <img src="../assets/shots/favorites.webp" alt="DPCL 收藏夹页面" loading="lazy" width="1228" height="661">
+            </button>
+            <p class="caption">收藏夹：包含收藏资源信息，支持分享收藏、导入分享码、全选与安装到版本。在资源管理页里，小五角星就是收藏按钮。</p>
+          </div>
+          <p>选择想要的模组即可快速安装到当前版本，会自动挑选合适的版本；安装功能会智能解析去重并获取前置，所以会有一些时间损耗，但值得。</p>
+          <div class="mini-grid">
+            <div class="mini"><h5>分享不是上传</h5><p>分享会把收藏数据编码成分享码，而不是上传数据。分享码 + 微信也是不错的同步方案。</p></div>
+            <div class="mini"><h5>云同步</h5><p>支持云同步，但依赖 dstbot 的云服务，并需要绑定 QQ 账号后才能使用。</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="doc-section" id="multiplayer">
+        <div class="doc-section-head"><span class="doc-num">05</span><h2>联机</h2></div>
+        <div class="doc-body">
+          <p>DPCL 把 PCL 开源版中隐藏的联机能力重新启用并加以优化。技术上沿用 easytier 组网方案；由于无法维护联机服务器，只内置两个公益节点（需要通过 GitHub 仓库同步预设）。</p>
+          <div class="note warn">
+            <div class="note-inner">
+              <p class="note-title">必须关闭防火墙</p>
+              <p>否则会出现连接错误。</p>
+            </div>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="联机">
+              <img src="../assets/shots/multiplayer.webp" alt="DPCL 联机页面" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">联机页：可以创建或加入房间。</p>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="联机节点">
+              <img src="../assets/shots/mp-node.webp" alt="联机节点选择" loading="lazy" width="1028" height="573">
+            </button>
+            <p class="caption">节点：从预设节点中选择延迟较低的，也可以填写自己知道的节点 IP。</p>
+          </div>
+          <p>传统 PCL 方案会维护节点列表，让加入者知道正确的 IP。DPCL 则把节点 IP 直接编码进邀请码里，于是邀请码更长、也存在一定风险，但使用起来更轻松。加入未知节点的房间时，DPCL 会提醒安全风险；easytier 的加密连接可以尽量保证信息安全。</p>
+        </div>
+      </section>
+
+      <!-- 06 -->
+      <section class="doc-section" id="toolbox">
+        <div class="doc-section-head"><span class="doc-num">06</span><h2>百宝箱</h2></div>
+        <div class="doc-body">
+          <p>PCL 开源版并不包含百宝箱，所以我们重新制作了一些有趣的功能放在这里。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="百宝箱">
+              <img src="../assets/shots/toolbox.webp" alt="DPCL 百宝箱页面" loading="lazy" width="1028" height="573">
+            </button>
+          </div>
+          <div class="mini-grid">
+            <div class="mini"><h5>音乐播放器</h5><p>内置音乐播放，取代个性化里的简单音乐能力。可在设置中登录网易云音乐获取在线音乐，暂不支持歌词。</p></div>
+            <div class="mini"><h5>下载器</h5><p>调用 PCL 的多线程下载工具，与 PCL 百宝箱中的那个是一样的东西。</p></div>
+            <div class="mini"><h5>内存优化</h5><p>与 PCL 同理，把内存压入虚拟内存（硬盘）。效果不如 PCL，可能是 PCL 采用了更激进的数值。</p></div>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="音乐播放器设置">
+              <img src="../assets/shots/music.webp" alt="音乐播放器设置页" loading="lazy" width="1028" height="865">
+            </button>
+            <p class="caption">音乐播放器：登录网易云音乐后可同步歌单，也能搜索歌曲与歌单。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 -->
+      <section class="doc-section" id="hanhua">
+        <div class="doc-section-head"><span class="doc-num">07</span><h2>汉化工具</h2></div>
+        <div class="doc-body">
+          <p>汉化工具并不属于 DPCL，而是另一个开源项目 <strong>DST i18n platform</strong>。DPCL 提供了一键安装与启动的能力，在版本设置里可以快速开启此版本的汉化工作台。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="版本设置 · 创建汉化">
+              <img src="../assets/shots/vset-modpack-hanhua.webp" alt="版本设置中的创建汉化入口" loading="lazy" width="1028" height="662">
+            </button>
+            <p class="caption">版本设置 → 快捷方式：点击「创建汉化」即可进入汉化工作台。</p>
+          </div>
+          <p>它能为整合包快速制作本地化（LLM 或机器翻译）。第一次使用需要先下载那个副程序。</p>
+          <div class="steps">
+            <div class="step"><div class="step-idx"><b>1</b></div><div class="step-body">
+              <h4>选择整合包目录</h4>
+              <p>软件会自动解析工作目录，并扫描需要汉化的模组、KubeJS 与 FTB Quests。</p>
+            </div></div>
+            <div class="step"><div class="step-idx"><b>2</b></div><div class="step-body">
+              <h4>设置 LLM 地址</h4>
+              <p>在设置中编辑好 LLM 地址后，就可以让 LLM 自动汉化了。</p>
+            </div></div>
+            <div class="step"><div class="step-idx"><b>3</b></div><div class="step-body">
+              <h4>审校并导出</h4>
+              <p>LLM 会询问一些模组中的专业名词，让汉化更精良（该功能可以关闭）。完成后导出 <b>zh_cn.json</b>，或直接生成资源包。</p>
+            </div></div>
+          </div>
+          <div class="shot-grid">
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="汉化工作台 · 模组扫描">
+                <img src="../assets/shots/hanhua-scan.webp" alt="汉化工作台的模组扫描列表" loading="lazy" width="1400" height="950">
+              </button>
+            </div>
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="汉化工作台 · 翻译">
+                <img src="../assets/shots/hanhua-translate.webp" alt="汉化工作台的翻译界面" loading="lazy" width="1400" height="950">
+              </button>
+            </div>
+          </div>
+          <p class="caption" style="margin-top:-6px">左：自动找到需要汉化的模组、KubeJS、FTB Quests，并标注是否缺少 zh_cn。右：LLM 翻译后可逐条审校。</p>
+          <p>提示词中已经提醒 LLM 避开非本地化键值对的编辑。</p>
+        </div>
+      </section>
+
+      <!-- 08 -->
+      <section class="doc-section" id="ui">
+        <div class="doc-section-head"><span class="doc-num">08</span><h2>界面与主题</h2></div>
+        <div class="doc-body">
+          <p>DPCL 改善了 PCL 的主题界面，提供两套 UI 方案：<strong>PCL（classic）</strong> 与 <strong>PCL Indra</strong>。第一次打开时可以选择一套默认布局。</p>
+          <ul>
+            <li>PCL 经典版开放了所有主题；「自定义主题」有一些问题，暂时不准备修复。</li>
+            <li>定制主题允许用户完全设置各个主题色。</li>
+            <li>除默认主题外，还有「高对比度」（黄/黑，强制深色）与深色模式。</li>
+          </ul>
+          <div class="shot-grid">
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="主题 · 浅色">
+                <img src="../assets/shots/theme-light.webp" alt="PCL 经典浅色主题" loading="lazy" width="1028" height="662">
+              </button>
+            </div>
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="主题 · 深色">
+                <img src="../assets/shots/theme-dark.webp" alt="PCL 经典深色模式" loading="lazy" width="1028" height="662">
+              </button>
+            </div>
+          </div>
+          <p class="caption" style="margin-top:-6px">左：经典浅色。右：深色模式。作者个人最喜欢经典浅色 + 玄素黑，深色下的橡木棕也不错。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="PCL Indra">
+              <img src="../assets/shots/theme-indra.webp" alt="PCL Indra 界面" loading="lazy" width="1028" height="663">
+            </button>
+            <p class="caption">PCL Indra：另一套完整的界面布局。</p>
+          </div>
+          <p>个性化包可以快捷导入导出，把背景图、自带音乐、主页文件与主题设置打包成一个 <b>.dclart</b> 文件，换机或分享给别人时一键还原。这个功能有不少 BUG，只能说「能用」。</p>
+        </div>
+      </section>
+
+      <!-- 09 -->
+      <section class="doc-section" id="online">
+        <div class="doc-section-head"><span class="doc-num">09</span><h2>在线功能</h2></div>
+        <div class="doc-body">
+          <p>联网后，DPCL 可以展示 DST 生态服务器的服务器列表与公告，并同步群消息（需要绑定 QQ）。其中最重要的是 <strong>DST-Mode 登入能力</strong>。</p>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="启动页">
+              <img src="../assets/shots/launch-main.webp" alt="DPCL 启动主界面" loading="lazy" width="1028" height="663">
+            </button>
+            <p class="caption">启动页：左侧账号区，右侧服务器状态与群公告。</p>
+          </div>
+
+          <h3 id="bind" class="sub-head">绑定 QQ<span class="doc-num">09a</span></h3>
+          <div class="steps">
+            <div class="step"><div class="step-idx"><b>1</b></div><div class="step-body">
+              <h4>输入要绑定的 QQ 号</h4>
+              <p>在机器人面板点击「绑定 QQ」，填入你的 QQ 号。</p>
+            </div></div>
+            <div class="step"><div class="step-idx"><b>2</b></div><div class="step-body">
+              <h4>在群里回复 OK</h4>
+              <p>发起后机器人会在群里 @你 并发送确认消息，<strong>5 分钟内回复 OK</strong> 即完成绑定。</p>
+            </div></div>
+            <div class="step"><div class="step-idx"><b>3</b></div><div class="step-body">
+              <h4>开始使用在线能力</h4>
+              <p>完成绑定后，消息查看、收藏夹同步等在线功能即可使用。</p>
+            </div></div>
+          </div>
+          <div class="shot">
+            <button class="shot-btn" type="button" data-zoom data-alt="绑定 QQ">
+              <img src="../assets/shots/qq-bind.webp" alt="绑定 QQ 对话框" loading="lazy" width="1028" height="663">
+            </button>
+            <p class="caption">绑定对话框：输入要绑定的 QQ 号。</p>
+          </div>
+
+          <h3 class="sub-head">DST 登入<span class="doc-num">09b</span></h3>
+          <p>此部分推荐服主查看。登入能力由 DST-Mode 提供，类似皮肤站，同时兼容正版登入。服务器启动时携带 <b>-javaagent</b> 参数，并在指定目录安装好代理模组，即可接受正版与 QQ 登入的玩家。</p>
+          <div class="steps">
+            <div class="step"><div class="step-idx"><b>1</b></div><div class="step-body"><h4>登录 QQ</h4><p>在启动页的 QQ 账号区点击「登录」，会提示输入游戏内使用的名字（3–16 位，只能包含字母、数字、下划线）。</p></div></div>
+            <div class="step"><div class="step-idx"><b>2</b></div><div class="step-body"><h4>检查正版重名</h4><p>登入时会检查是否与正版用户同名（由 DST Bot 负责检测）。</p></div></div>
+            <div class="step"><div class="step-idx"><b>3</b></div><div class="step-body"><h4>启动游戏</h4><p>启动器会自动携带 JVM 参数。使用 QQ 登入的玩家可以进入使用 DST-Mode 的服务器，正版玩家也能正常加入。</p></div></div>
+          </div>
+          <div class="shot-grid">
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="QQ 登录">
+                <img src="../assets/shots/qq-login.webp" alt="QQ 登录对话框" loading="lazy" width="1028" height="663">
+              </button>
+            </div>
+            <div class="shot">
+              <button class="shot-btn" type="button" data-zoom data-alt="皮肤绑定">
+                <img src="../assets/shots/skin-bind.webp" alt="皮肤绑定提示" loading="lazy" width="318" height="318">
+              </button>
+            </div>
+          </div>
+          <p class="caption" style="margin-top:-6px">左：QQ 登录时设置游戏内名称。右：登录后可在 QQ 里发 <b>/dst skin</b> 绑定皮肤。</p>
+          <div class="note">
+            <div class="note-inner">
+              <p class="note-title">皮肤显示说明</p>
+              <p>正版玩家无法看到 QQ 玩家的皮肤（即使安装模组）；QQ 玩家可以看到正版玩家的皮肤。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="doc-section" id="misc">
+        <div class="doc-section-head"><span class="doc-num">10</span><h2>其他小功能与致谢</h2></div>
+        <div class="doc-body">
+          <div class="mini-grid">
+            <div class="mini"><h5>自定义服务器</h5><p>添加自定义服务器，查看它们的连接信息。</p></div>
+            <div class="mini"><h5>检查更新</h5><p>点一下版本号即可检查更新（From Trop）。</p></div>
+            <div class="mini"><h5>群消息图片设为背景</h5><p>快捷保存 QQ 消息中的图片作为启动器背景。</p></div>
+            <div class="mini"><h5>启动选项</h5><p>启动游戏时可自动安装汉化材质包与通用拼音搜索。</p></div>
+            <div class="mini"><h5>协议设置</h5><p>修改默认网络协议，解决部分资源下载过慢。</p></div>
+            <div class="mini"><h5>下载配置</h5><p>下载源、版本列表源、线程数、速度限制、目标文件夹等都在设置中。</p></div>
+          </div>
+
+          <h3 class="sub-head">开发者的几句实话</h3>
+          <p>制作过程中无数次遇到智能体自行从头设计已有功能（例如存档管理里的数据包管理）。无论模型好坏，智能体在「许愿式编程」中的工程管理能力都非常堪忧，目的在于完成而不是如何完成。不过这一问题可以通过预设提示词规范好。</p>
+          <div class="code">
+            <div class="code-head"><span>Agent Prompt · 经验总结</span><button class="copy" type="button" data-copy>复制</button></div>
+<pre>1. 遇到常规做法报错时，禁止从头编写相关能力或用字节码、汇编等方式手动调整二进制文件，应先与使用者报告
+2. 制作用于下载、配置等常用功能时，应解耦为独立模块，便于后续复用
+3. 编写任意功能前，先回顾是否已有类似功能；如有，解耦并记录在 function.md 中
+4. 注释应简洁干练地说明功能实现，而不是记录开发想法与用户要求
+5. 上传时不应上传 agent 相关文件、测试工具等无关文件
+6. 非必要不进行全量测试</pre>
+          </div>
+
+          <h3 class="sub-head">鸣谢</h3>
+          <table class="doc-table">
+            <thead><tr><th>致谢对象</th><th>贡献</th></tr></thead>
+            <tbody>
+              <tr><td><b>Trop</b></td><td>提供了 Deepseek 的大部分开销；设计了 PCL Indra</td></tr>
+              <tr><td><b>Workbuddy</b></td><td>提供了 Deepseek 剩下的开销</td></tr>
+              <tr><td><b>龙腾猫跃</b></td><td>提供了优秀的框架</td></tr>
+              <tr><td><b>Deepseek</b></td><td>开发者</td></tr>
+              <tr><td><b>GitHub</b></td><td>托管</td></tr>
+              <tr><td><b>EasyTier</b></td><td>联机</td></tr>
+              <tr><td><b>公益节点</b></td><td>伟大</td></tr>
+              <tr><td><b>下载源</b></td><td>无需多言</td></tr>
+            </tbody>
+          </table>
+
+          <div class="note">
+            <div class="note-inner">
+              <p class="note-title">声明</p>
+              <p>以上仅代表个人看法，理智评论。开发者不会 VB，也不是重度 AI 工具使用者。DPCL 的开发中完全使用 Deepseek + DSH + ops(bash)，没有使用 MCP 与技能，仅凭已有知识进行理解。如有差错，感谢指正。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="doc-foot">
+        <a class="btn btn-ghost" href="../index.html">← 返回首页</a>
+        <a class="btn btn-primary" href="https://github.com/xiaoqiezi-china/dst-login-mode" target="_blank" rel="noopener">DST-Mode 仓库 →</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 8h14M12 8v10M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+        <span>DST</span>
+      </div>
+      <p>方块树上方块果，方块树下你和我。</p>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 DST · 开源学习作品</span>
+      <a href="#top">回到顶部</a>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" data-lightbox aria-modal="true" role="dialog" aria-label="图片预览" hidden>
+  <button class="lightbox-close" type="button" data-lightbox-close aria-label="关闭"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
+  <img data-lightbox-img alt="">
+</div>
+
+<script src="../js/main.js" defer></script>
+<script src="../js/doc.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DST</title>
+<meta name="description" content="DST">
+<meta name="theme-color" content="#f6f7f9">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script>
+  (function () {
+    var t = localStorage.getItem('dst-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body class="home">
+
+<nav class="dock" data-nav>
+  <a class="dock-link" href="dpcl/index.html">
+    <span class="dock-label">DPCL</span>
+    <span class="dock-sub">教程</span>
+  </a>
+  <span class="dock-sep" aria-hidden="true"></span>
+  <a class="dock-link" href="dpcl/index.html#online">
+    <span class="dock-label">在线</span>
+    <span class="dock-sub">功能</span>
+  </a>
+  <span class="dock-sep" aria-hidden="true"></span>
+  <a class="dock-link" href="dpcl/index.html#misc">
+    <span class="dock-label">致谢</span>
+    <span class="dock-sub">鸣谢</span>
+  </a>
+</nav>
+
+<main class="stage">
+  <div class="ambient" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grain"></div>
+  </div>
+
+  <h1 class="typer" aria-label="DST">
+    <span class="typer-text" data-typer></span><span class="typer-caret" aria-hidden="true"></span>
+  </h1>
+</main>
+
+<button class="theme-btn" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+  <span data-theme-icon></span>
+</button>
+
+<script src="js/main.js" defer></script>
+</body>
+</html>
