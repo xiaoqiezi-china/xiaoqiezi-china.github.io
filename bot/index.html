@@ -104,8 +104,8 @@
 <p class="para">随后，需准备onebot11协议的websocket服务端信息</p>
 <p class="para">也即 ws地址，令牌</p>
 <p class="para">在侧边栏的系统与接入</p>
-<figure><img src="../assets/bot/shots/account.png" alt="" loading="lazy"></figure>
 <p class="para">中即可添加机器人账号，</p>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/account.png" alt="" loading="lazy"></button></figure>
 <p class="para">同时在这里可以完成机器人的超管账号设置。</p>
 <p class="para">不过，多个机器人账号并没有进行过测试，无法保证多账号下的运行状况</p>
 <p class="para">另外，机器人在加入群聊后务必由群管及以上输入<strong>/startbot</strong>或者<strong>/启用</strong>才能唤醒机器人</p>
@@ -113,16 +113,16 @@
 </section>
 <section class="block" id="webui-h"><h2 class="sec-h2">webUI功能</h2><div class="card-grid">
 <article class="ui-card" id="w0"><h3 class="card-title">仪表盘</h3><p class="para">如图为仪表盘</p>
-<figure><img src="../assets/bot/shots/dashboard.png" alt="" loading="lazy"></figure>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/dashboard.png" alt="" loading="lazy"></button></figure>
 <p class="para">是webUI的第一个页面，展示了当前运行中的机器人账号与LLM开支情况，并且对一些 常用功能进行导航</p></article>
 <article class="ui-card" id="w1"><h3 class="card-title">群管理</h3><p class="para">如图为群管理</p>
-<figure><img src="../assets/bot/shots/groups.png" alt="" loading="lazy"></figure>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/groups.png" alt="" loading="lazy"></button></figure>
 <p class="para">这是webUI中最为常用但也最为冗余的功能，不大不小的功能全部被堆在这里进行配置</p>
 <p class="para"><strong>对外隐藏</strong> 勾选对外隐藏之后群聊将不会出现在对外API接口中。返回群聊列表的API将忽略这些群聊</p>
 <p class="para"><strong>发消息</strong> 自动跳转到发消息页面并填入群号</p>
 <p class="para"><strong>群配置</strong> 基本功能都有介绍，太过复杂，自行查看。</p></article>
 <article class="ui-card" id="w2"><h3 class="card-title">成员统计</h3><p class="para">成员统计展示了机器人加入的群聊中所有成员的信息，并提供了基本的数据分析能力</p>
-<figure><img src="../assets/bot/shots/members.png" alt="" loading="lazy"></figure>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/members.png" alt="" loading="lazy"></button></figure>
 <p class="para">你可以查看这些群聊的并集成员，去除群聊中重复的部分</p>
 <p class="para">也可以单独对各个群聊的成员进行统计</p>
 <p class="para">根据其活跃度，等级进行排序。</p>
@@ -130,8 +130,8 @@
 <p class="para">如果机器人有相关群聊的权限，也可以直接踢掉群成员。</p></article>
 <article class="ui-card" id="w3"><h3 class="card-title">服务器列表</h3><p class="para">在这里，管理员可以为bot添加其所管理的服务器。</p>
 <p class="para">目前兼容了mcsm,木桶,雨云面板。mcsm是兼容性最好的，你只需要提供mcsm的链接与其API令牌即可接入bot.</p>
-<figure><img src="../assets/bot/shots/servers.png" alt="" loading="lazy"></figure>
 <p class="para">bot会自动读取各个面板的实例，并创建为服务器对象</p>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/servers.png" alt="" loading="lazy"></button></figure>
 <p class="para">在bot的逻辑里，每一个服务器会作为单独对象被管理。</p>
 <p class="para">你可以设置这个服务器的昵称，显示ip，状态，关联的安装包，参与的群组服。</p>
 <p class="para">随后，在群面板中，管理其是否在这个群显示，以及在这个群被管理所需要的权限。</p>
@@ -143,8 +143,8 @@
 <p class="para">这些设置会影响几乎所有的MC服务器相关功能</p>
 <h5 class="sub-label">群组服</h5>
 <p class="para">对于群组服务器，bot也提供了专门的兼容。</p>
-<figure><img src="../assets/bot/shots/grouping.png" alt="" loading="lazy"></figure>
 <p class="para">在这里你可以创建一个集合，并设定群组服的入口IP昵称以及其子服。</p>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/grouping.png" alt="" loading="lazy"></button></figure>
 <p class="para">加入到群组服的子服在设定上仍然被视作是单独的服务器。但是子服通常是内网服务器，所以建议使用MCSM来接入。否则无法进行有效探测。</p>
 <p class="para">群组服会被当成单独的服务器渲染和对外提供。其人数是所有子服人数和。</p>
 <h5 class="sub-label">补充</h5>
@@ -155,7 +155,7 @@
 <article class="ui-card" id="w6"><h3 class="card-title">合并转发</h3><p class="para">顾名思义，有一点废掉的功能，但也许有用，提供了自定义合并转发的功能。</p></article>
 <article class="ui-card" id="w7"><h3 class="card-title">agent / qiegent</h3><p class="para">这是一个遗留问题。早期agent不仅仅有qiegent,负责服务器管理的agent是单独分开的(dst agent)但考虑到后面的实际使用</p>
 <p class="para">两个agent合并了。但对agent的总管理和对qiegent的子管理并没有分开</p>
-<figure><img src="../assets/bot/shots/agent.png" alt="" loading="lazy"></figure>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/agent.png" alt="" loading="lazy"></button></figure>
 <h5 class="sub-label">一些可能有BUG,不会用的设置的解释</h5>
 <p class="para">最多工具轮数 :  实际生效的应该是qiegent那里的工具轮数，无法确定其目前作用，不过无论如何建议设置的高一点。否则AI很容易干一半死掉。</p>
 <p class="para">每日预算 : 这里的预算是agent的总上限，由于没有另一个agent了，所以这里的上限就承担了实际的上限</p>
@@ -231,7 +231,7 @@
 <div class="sub-cmd"><h6 class="sub-label-t">设置服务器显示IP</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] ip set\reset</code></div><p class="cmd-desc">xxx</p></div></div>
 <div class="sub-cmd"><h6 class="sub-label-t">设置屏蔽的服务器</h6><div class="cmd-row"><div class="cmd-line"><code class="path"></code></div><p class="cmd-desc">这属于已被代替的功能，目前显示列表可以直接开关，而不是使用黑名单，是否有效未测试 /server backlist add\remove [选择器]</p></div></div>
 <div class="sub-cmd"><h6 class="sub-label-t">发送控制台命令</h6><div class="cmd-row"><div class="cmd-line"><code class="path"></code></div><p class="cmd-desc">面板接入的实例才能使用 /server [选择器] console_send xxx</p></div></div>
-<div class="sub-cmd"><h6 class="sub-label-t">终端</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] terminal [<span class="arg">参数</span>]</code></div><figure><img src="../assets/bot/shots/terminal.png" alt="" loading="lazy"></figure></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">终端</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] terminal [<span class="arg">参数</span>]</code></div><figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/terminal.png" alt="" loading="lazy"></button></figure></div></div>
 <p class="para">终端支持复杂的切割方法来查看期望的日志。具体查看如图介绍，也可以直接发送/server terminal bot会发送一张教程卡片</p>
 <h5 class="group-title">存档管理能力</h5>
 <p class="para">子命令 save / 存档</p>
@@ -251,7 +251,7 @@
 <p class="para">仅群聊可用</p>
 <div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">主题</span><span class="alias">皮肤</span><span class="alias">theme</span></div>
 <p class="para">用于管理卡片的显示效果。 完全可用。</p>
-<div class="cmd-row"><div class="cmd-line"><code class="path">/theme</code></div><p class="cmd-desc">查看主题介绍卡片</p><figure><img src="../assets/bot/shots/theme.png" alt="" loading="lazy"></figure></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme</code></div><p class="cmd-desc">查看主题介绍卡片</p><figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/theme.png" alt="" loading="lazy"></button></figure></div>
 <div class="cmd-row"><div class="cmd-line"><code class="path">/theme preview</code><span class="alias-group"><span class="alias">预览</span></span></div><p class="cmd-desc">查看一张预览卡片</p></div>
 <div class="cmd-row"><div class="cmd-line"><code class="path">/theme &lt;主题名&gt;</code></div><p class="cmd-desc">切换主题卡片</p></div>
 <div class="cmd-row"><div class="cmd-line"><code class="path">/theme upload</code><span class="alias-group"><span class="alias">上传</span><span class="alias">上传背景</span></span></div><p class="cmd-desc">为卡片设置背景图片</p></div>
@@ -319,7 +319,7 @@
 <article class="fun-card" id="f9"><h4 class="fun-title">音乐</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/music search</code></div><p class="cmd-desc">搜索音乐</p></div>
 <div class="cmd-row"><div class="cmd-line"><code class="path">/music [<span class="arg">序号</span>]</code></div><p class="cmd-desc">选择音乐</p></div></article>
 <article class="fun-card" id="f10"><h4 class="fun-title">抽奖</h4><p class="para">输入/lucky 查看使用方法</p>
-<figure><img src="../assets/bot/shots/lucky.png" alt="" loading="lazy"></figure></article>
+<figure class="fig"><button class="shot-btn" type="button" data-zoom aria-label="放大查看"><img src="../assets/bot/shots/lucky.png" alt="" loading="lazy"></button></figure></article>
 <article class="fun-card" id="f11"><h4 class="fun-title">分析</h4><p class="para">输入/qqanlysis/群分析/群统计/qp 来分析群聊</p></article>
 <article class="fun-card" id="f12"><h4 class="fun-title">街景</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/cam /街景 /实况</code></div></div>
 <p class="para">调用网络摄像头获取街景</p></article>
@@ -341,6 +341,11 @@
     </div>
   </div>
 </footer>
+
+<div class="lightbox" data-lightbox aria-modal="true" role="dialog" aria-label="图片预览" hidden>
+  <button class="lightbox-close" type="button" data-lightbox-close aria-label="关闭"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
+  <img data-lightbox-img alt="">
+</div>
 
 <script src="../js/doc.js" defer></script>
 </body>

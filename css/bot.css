@@ -43,12 +43,6 @@
 .callout strong { color: var(--ink); }
 
 /* ---------- 图片 ---------- */
-figure { margin: 18px 0; }
-figure img {
-  width: 100%; height: auto; display: block;
-  border: 1px solid var(--line); border-radius: var(--r-md);
-  background: var(--bg-sink);
-}
 
 /* ---------- webUI 卡片网格 ---------- */
 .card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -163,4 +157,48 @@ figure img {
 }
 
 /* 命令块内图片与命令的间距 */
-.cmd-row figure { margin: 12px 0 4px; }
+
+
+/* ---------- 截图版式：与正文同宽、居中、可放大 ---------- */
+.doc-main figure.fig {
+  margin: 20px auto 26px;
+  max-width: 760px;
+}
+.doc-main figure.fig .shot-btn {
+  display: block; width: 100%; padding: 0;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  overflow: hidden; background: var(--bg-sink);
+  cursor: zoom-in;
+  transition: border-color .25s var(--ease), box-shadow .3s var(--ease), transform .25s var(--ease);
+}
+.doc-main figure.fig .shot-btn:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-2);
+  transform: translateY(-1px);
+}
+.doc-main figure.fig img { width: 100%; height: auto; display: block; }
+
+/* 卡片内截图不需要再居中放大 */
+.ui-card figure.fig, .fun-card figure.fig { margin: 14px 0; max-width: 100%; }
+.ui-card figure.fig .shot-btn, .fun-card figure.fig .shot-btn { cursor: zoom-in; }
+
+/* 段落节奏：短句之间更紧凑，读起来不散 */
+.para { margin-bottom: 9px; }
+.para + .para { margin-top: 0; }
+
+/* ---------- 滚动条：深色下不再出现一条白色亮边 ---------- */
+.doc-toc { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+.doc-toc::-webkit-scrollbar { width: 6px; }
+.doc-toc::-webkit-scrollbar-track { background: transparent; }
+.doc-toc::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+.doc-toc:hover::-webkit-scrollbar-thumb { background: var(--line-strong); }
+
+html[data-theme="dark"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-theme="dark"] ::-webkit-scrollbar-track { background: transparent; }
+html[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #2b313b; border-radius: 999px; border: 2px solid var(--bg); }
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #3a414d; }
+html[data-theme="dark"] { scrollbar-color: #2b313b transparent; scrollbar-width: thin; }
+
+@media (max-width: 720px) {
+  .doc-main figure.fig { margin: 16px 0 20px; max-width: 100%; }
+}
