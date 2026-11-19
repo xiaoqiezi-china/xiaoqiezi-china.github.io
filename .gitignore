@@ -1,3 +1,4 @@
 _work/
 *.log
 .DS_Store
+.local/
