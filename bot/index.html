@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DST QQBOT 使用文档</title>
+<meta name="theme-color" content="#f6f7f9">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/doc.css">
+<link rel="stylesheet" href="../css/bot.css">
+<script>
+  (function () {
+    var t = localStorage.getItem('dst-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#content">跳到正文</a>
+
+<header class="nav" data-nav>
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 8h14M12 8v10M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="brand-name">DST</span>
+    </a>
+    <nav class="nav-links" aria-label="导航">
+      <a href="../dpcl/index.html">DPCL 教程</a>
+      <a href="../index.html" class="nav-cta">返回首页</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+      <span data-theme-icon></span>
+    </button>
+  </div>
+</header>
+<div class="read-bar" aria-hidden="true"><i data-read-progress></i></div>
+
+<main id="content">
+  <div class="wrap doc-layout">
+    <aside class="doc-toc" aria-label="目录">
+      <p class="toc-title">目录</p>
+      <nav class="toc-list">
+        <a href="#preface" class="toc-link">前言</a>
+        <a href="#deploy" class="toc-link">如何部署</a>
+        <a href="#webui-h" class="toc-link">webUI功能</a>
+        <a href="#w0" class="toc-link toc-sub">仪表盘</a>
+        <a href="#w1" class="toc-link toc-sub">群管理</a>
+        <a href="#w2" class="toc-link toc-sub">成员统计</a>
+        <a href="#w3" class="toc-link toc-sub">服务器列表</a>
+        <a href="#w4" class="toc-link toc-sub">发送消息</a>
+        <a href="#w5" class="toc-link toc-sub">群公告</a>
+        <a href="#w6" class="toc-link toc-sub">合并转发</a>
+        <a href="#w7" class="toc-link toc-sub">agent / qiegent</a>
+        <a href="#w8" class="toc-link toc-sub">点歌</a>
+        <a href="#w9" class="toc-link toc-sub">LLM监控</a>
+        <a href="#w10" class="toc-link toc-sub">抽奖</a>
+        <a href="#w11" class="toc-link toc-sub">B站成分</a>
+        <a href="#w12" class="toc-link toc-sub">图片视频生成</a>
+        <a href="#w13" class="toc-link toc-sub">一堆搜索(curseforge , github , mcmod , hypixel , 三角洲)</a>
+        <a href="#w14" class="toc-link toc-sub">DST-MODE</a>
+        <a href="#w15" class="toc-link toc-sub">MC玩家</a>
+        <a href="#w16" class="toc-link toc-sub">对外API</a>
+        <a href="#w17" class="toc-link toc-sub">用户设置</a>
+        <a href="#w18" class="toc-link toc-sub">api调试</a>
+        <a href="#commands" class="toc-link">命令功能</a>
+        <a href="#admin" class="toc-link">管理员功能</a>
+        <a href="#fun" class="toc-link">功能大全</a>
+        <a href="#f0" class="toc-link toc-sub">主题</a>
+        <a href="#f1" class="toc-link toc-sub">服务器</a>
+        <a href="#f2" class="toc-link toc-sub">ping</a>
+        <a href="#f3" class="toc-link toc-sub">查成分</a>
+        <a href="#f4" class="toc-link toc-sub">帝释天模式登入</a>
+        <a href="#f5" class="toc-link toc-sub">群投票</a>
+        <a href="#f6" class="toc-link toc-sub">Whale</a>
+        <a href="#f7" class="toc-link toc-sub">QQ绑定</a>
+        <a href="#f8" class="toc-link toc-sub">一堆搜索类命令</a>
+        <a href="#f9" class="toc-link toc-sub">音乐</a>
+        <a href="#f10" class="toc-link toc-sub">抽奖</a>
+        <a href="#f11" class="toc-link toc-sub">分析</a>
+        <a href="#f12" class="toc-link toc-sub">街景</a>
+      </nav>
+    </aside>
+
+    <div class="doc-main">
+      <header class="doc-hero" id="top">
+        <p class="eyebrow">使用文档</p>
+        <h1 class="doc-title">DST QQBOT 使用文档</h1>
+      </header>
+
+<section class="block">
+<h2 class="sec-h2" id="preface">前言</h2>
+<p class="para">本文档为DST QQBOT V2的官方使用文档</p>
+<p class="para">dst qqbot 基于onebot11协议开发。通过websocket与服务端通讯来实现功能，本身是独立的程序。建议部署在容器中运行。</p>
+<p class="para">bot最初开发用于MC服务器的管理和监控，在mc相关功能上较为全面。</p>
+<p class="para">v2是由于此bot是由于v1过于混乱难以管理，进行的二次开发。v2在代码的健康度略好，但到目前为止也比较混乱。</p>
+<p class="para">bot尚未开源，因为对代码的整理脱敏工程量较大。</p>
+<h2 class="sec-h2" id="deploy">如何部署</h2>
+<p class="para">正确启动的详情查看github仓库(在开源之后)</p>
+<p class="para">在正确启动之后，后端会监听3001端口(非回环)，于此部署webUI</p>
+<p class="para">机器人在启动时会输出webUI token</p>
+<p class="para">使用正确的令牌即可进入管理面板</p>
+<p class="para">管理面板的UI比较杂乱，但是在功能上较为齐全。</p>
+<p class="para">随后，需准备onebot11协议的websocket服务端信息</p>
+<p class="para">也即 ws地址，令牌</p>
+<p class="para">在侧边栏的系统与接入</p>
+<figure><img src="../assets/bot/shots/account.png" alt="" loading="lazy"></figure>
+<p class="para">中即可添加机器人账号，</p>
+<p class="para">同时在这里可以完成机器人的超管账号设置。</p>
+<p class="para">不过，多个机器人账号并没有进行过测试，无法保证多账号下的运行状况</p>
+<p class="para">另外，机器人在加入群聊后务必由群管及以上输入<strong>/startbot</strong>或者<strong>/启用</strong>才能唤醒机器人</p>
+<p class="para">至此，一切正常的话，机器人服务就可以正常运行了</p>
+</section>
+<section class="block" id="webui-h"><h2 class="sec-h2">webUI功能</h2><div class="card-grid">
+<article class="ui-card" id="w0"><h3 class="card-title">仪表盘</h3><p class="para">如图为仪表盘</p>
+<figure><img src="../assets/bot/shots/dashboard.png" alt="" loading="lazy"></figure>
+<p class="para">是webUI的第一个页面，展示了当前运行中的机器人账号与LLM开支情况，并且对一些 常用功能进行导航</p></article>
+<article class="ui-card" id="w1"><h3 class="card-title">群管理</h3><p class="para">如图为群管理</p>
+<figure><img src="../assets/bot/shots/groups.png" alt="" loading="lazy"></figure>
+<p class="para">这是webUI中最为常用但也最为冗余的功能，不大不小的功能全部被堆在这里进行配置</p>
+<p class="para"><strong>对外隐藏</strong> 勾选对外隐藏之后群聊将不会出现在对外API接口中。返回群聊列表的API将忽略这些群聊</p>
+<p class="para"><strong>发消息</strong> 自动跳转到发消息页面并填入群号</p>
+<p class="para"><strong>群配置</strong> 基本功能都有介绍，太过复杂，自行查看。</p></article>
+<article class="ui-card" id="w2"><h3 class="card-title">成员统计</h3><p class="para">成员统计展示了机器人加入的群聊中所有成员的信息，并提供了基本的数据分析能力</p>
+<figure><img src="../assets/bot/shots/members.png" alt="" loading="lazy"></figure>
+<p class="para">你可以查看这些群聊的并集成员，去除群聊中重复的部分</p>
+<p class="para">也可以单独对各个群聊的成员进行统计</p>
+<p class="para">根据其活跃度，等级进行排序。</p>
+<p class="para">不要忘记，在群成员列表下面有总的成员列表。</p>
+<p class="para">如果机器人有相关群聊的权限，也可以直接踢掉群成员。</p></article>
+<article class="ui-card" id="w3"><h3 class="card-title">服务器列表</h3><p class="para">在这里，管理员可以为bot添加其所管理的服务器。</p>
+<p class="para">目前兼容了mcsm,木桶,雨云面板。mcsm是兼容性最好的，你只需要提供mcsm的链接与其API令牌即可接入bot.</p>
+<figure><img src="../assets/bot/shots/servers.png" alt="" loading="lazy"></figure>
+<p class="para">bot会自动读取各个面板的实例，并创建为服务器对象</p>
+<p class="para">在bot的逻辑里，每一个服务器会作为单独对象被管理。</p>
+<p class="para">你可以设置这个服务器的昵称，显示ip，状态，关联的安装包，参与的群组服。</p>
+<p class="para">随后，在群面板中，管理其是否在这个群显示，以及在这个群被管理所需要的权限。</p>
+<p class="para">通过这些，可以为不同的群提供不同的服务器服务。</p>
+<p class="para">当然，你也可以通过添加外部服务器的方法接入自定义地址的服务器。</p>
+<p class="para">bot会使用listping协议获取服务器信息，但无法提供进阶功能。</p>
+<p class="para">对于listping协议获取的服务器，当延迟低于阈值时显示延迟，高于阈值时仅显示是否运行。</p>
+<p class="para">不过，这是为了避免某些时候bot由于性能压力导致的错误探测造成延迟误解。</p>
+<p class="para">这些设置会影响几乎所有的MC服务器相关功能</p>
+<h5 class="sub-label">群组服</h5>
+<p class="para">对于群组服务器，bot也提供了专门的兼容。</p>
+<figure><img src="../assets/bot/shots/grouping.png" alt="" loading="lazy"></figure>
+<p class="para">在这里你可以创建一个集合，并设定群组服的入口IP昵称以及其子服。</p>
+<p class="para">加入到群组服的子服在设定上仍然被视作是单独的服务器。但是子服通常是内网服务器，所以建议使用MCSM来接入。否则无法进行有效探测。</p>
+<p class="para">群组服会被当成单独的服务器渲染和对外提供。其人数是所有子服人数和。</p>
+<h5 class="sub-label">补充</h5>
+<p class="para">在群面板中有着SLP协议开关，缓存时间，以及前文所说阈值大小的设置。</p>
+<p class="para">同时可以自定义渲染卡片的标题。</p></article>
+<article class="ui-card" id="w4"><h3 class="card-title">发送消息</h3><p class="para">顾名思义</p></article>
+<article class="ui-card" id="w5"><h3 class="card-title">群公告</h3><p class="para">发送消息的升级版本，在所有加入群中发送消息</p></article>
+<article class="ui-card" id="w6"><h3 class="card-title">合并转发</h3><p class="para">顾名思义，有一点废掉的功能，但也许有用，提供了自定义合并转发的功能。</p></article>
+<article class="ui-card" id="w7"><h3 class="card-title">agent / qiegent</h3><p class="para">这是一个遗留问题。早期agent不仅仅有qiegent,负责服务器管理的agent是单独分开的(dst agent)但考虑到后面的实际使用</p>
+<p class="para">两个agent合并了。但对agent的总管理和对qiegent的子管理并没有分开</p>
+<figure><img src="../assets/bot/shots/agent.png" alt="" loading="lazy"></figure>
+<h5 class="sub-label">一些可能有BUG,不会用的设置的解释</h5>
+<p class="para">最多工具轮数 :  实际生效的应该是qiegent那里的工具轮数，无法确定其目前作用，不过无论如何建议设置的高一点。否则AI很容易干一半死掉。</p>
+<p class="para">每日预算 : 这里的预算是agent的总上限，由于没有另一个agent了，所以这里的上限就承担了实际的上限</p>
+<p class="para">禁用工具：没用过，不一定有用</p>
+<p class="para">LLM排队等待 : 这个有用，但具体怎么用的已经没人知道了</p>
+<p class="para">变动授权有效期 : 这个指的是AI改设置功能时会等待发起者多久</p>
+<p class="para">价目表 : 用于计算花费</p>
+<p class="para">会话上下文：已废弃，因为dst agent是用户级上下文。</p>
+<h5 class="sub-label">qiegent</h5>
+<p class="para">qiegent页面的工具说明是中文的，更易于理解</p>
+<p class="para">其功能很多与agent重复，如果qiegent设置没用就去设置agent的。</p>
+<h5 class="sub-label">qiegent的一些可能误解的设置的解释</h5>
+<p class="para">纯 @ 短反应: 这里指有用户@了bot但什么话没说的时候的反应，只携带图片没有正文也会触发</p>
+<p class="para">收到即点赞:此功能目前为总功能，这里这个开关是否有效未知。</p>
+<p class="para">点赞表情id:也就是对消息回应表情那里的ID.</p>
+<p class="para">连击封禁:避免刷屏@bot</p>
+<p class="para">AI 每轮最多发歌 : 避免bot发疯刷屏</p>
+<p class="para">监管AI:避免污染AI提示词。确保AI正常工作</p></article>
+<article class="ui-card" id="w8"><h3 class="card-title">点歌</h3><p class="para">顾名思义，设置/music search /music 以及 agent点歌工具的配置</p>
+<p class="para">在这里配置网易云 QQ音乐的令牌</p>
+<p class="para">QQ音乐理论有效，但设计上令牌没有做续签，三天内失效，而且QQ音乐是否还能真的调用已经无法确定。</p>
+<p class="para">发送方式中的私聊发送确定失效</p></article>
+<article class="ui-card" id="w9"><h3 class="card-title">LLM监控</h3><p class="para">管理LLM具体的数据包情况</p></article>
+<article class="ui-card" id="w10"><h3 class="card-title">抽奖</h3><p class="para">实际是/lucky命令的控制台。包含了轮盘赌小游戏，不幸转盘，solo</p></article>
+<article class="ui-card" id="w11"><h3 class="card-title">B站成分</h3><p class="para">通过aicu.cc的API获取指定uuid的所有评论，并由AI进行总结</p></article>
+<article class="ui-card" id="w12"><h3 class="card-title">图片视频生成</h3><p class="para">基于GLM提供的免费图片视频生成模型。理论上兼容GLM全系列模型。</p></article>
+<article class="ui-card" id="w13"><h3 class="card-title">一堆搜索(curseforge , github , mcmod , hypixel , 三角洲)</h3><p class="para">mcmod应该已经失效了。</p>
+<p class="para">github需要apikey，不填的话非常容易限流</p>
+<p class="para">curseforge 必须要apikey</p>
+<p class="para">hypixel也需要api key</p>
+<p class="para">三角洲是从kkrb.net上抓数据，无需key</p></article>
+<article class="ui-card" id="w14"><h3 class="card-title">DST-MODE</h3><p class="para">DST-Mode的验证服务器设置</p></article>
+<article class="ui-card" id="w15"><h3 class="card-title">MC玩家</h3><p class="para">部署了dstmode的服务器正版验证会被路由到bot的验证服务器进行验证，此页面会记录这些路由的数据，并统计玩家信息</p>
+<p class="para">(都是合法数据的统计)</p></article>
+<article class="ui-card" id="w16"><h3 class="card-title">对外API</h3><p class="para">管理索引和变量。</p>
+<p class="para">索引用于指向本地文件或者URL。用于管理资源分发。</p>
+<p class="para">服务器列表的服务器绑定了索引后会在对外API的获取服务器列表中携带索引，便于进行自动安装整合包功能的开发。</p></article>
+<article class="ui-card" id="w17"><h3 class="card-title">用户设置</h3><p class="para">几乎没用，如果有用户不想用公共api，忍受每日预算的限制可以用。有没有用也不清楚。</p></article>
+<article class="ui-card" id="w18"><h3 class="card-title">api调试</h3><p class="para">进行onebot11API的收发测试。开发者使用</p></article>
+</div></section>
+<section class="block" id="commands"><h2 class="sec-h2">命令功能</h2>
+<p class="para">设计上命令的尾部添加s即可强制以文本形式返回。但实际哪些命令兼容无法确定。</p>
+<div class="callout"><strong>命令功能逻辑上都可以直接让agent代为完成。包括设置类操作</strong></div>
+</section>
+<section class="block" id="admin"><h3 class="sec-h3">管理员功能</h3>
+<p class="para">本栏目介绍需要群管及以上权限执行的命令</p>
+<h5 class="group-title">超管</h5>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/llm</code></div><p class="cmd-desc">显示今日大预言模型消耗情况</p></div>
+<p class="para">*别名 预算*</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/llm reset</code></div><p class="cmd-desc">重制今日预算</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/sa</code></div><p class="cmd-desc">超管的系列功能,目前用于管理当前群聊手动提权的用户、</p></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">setadmin</span><span class="alias">授权</span></div>
+<p class="para">如果你希望群成员可以使用bot的群管功能，但又不希望给他群管理</p>
+<p class="para">则可以使用/sa addadmin 手动提权</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/sa removeadmin</code></div><p class="cmd-desc">删除提权</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/sa</code></div><p class="cmd-desc">查看提权列表</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/debug</code></div><p class="cmd-desc">返回一张运行状态卡片</p></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">dbg</span><span class="alias">状态</span><span class="alias">status</span></div>
+<h5 class="group-title">群管及以上</h5>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/fw</code></div><p class="cmd-desc">通过JSON序列化文本生成合并转发</p></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">合并转发</span><span class="alias">forward</span></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/startbot</code></div></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">启用</span></div>
+<p class="para">启用bot,机器人在进入新群聊后默认静默。必须执行此命令唤醒</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server</code></div><p class="cmd-desc">(部分)</p></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">服务器</span><span class="alias">sr</span><span class="alias">mc</span></div>
+<p class="para">server本身并不是群管命令，但其部分子命令需要群管权限。</p>
+<p class="para">[选择器]是什么？</p>
+<p class="para">其指代程序如何识别到你期望的服务器。此处的选择器采用了模糊匹配服务器名称、IP、昵称来寻找你期望的服务器</p>
+<div class="sub-cmd"><h6 class="sub-label-t">设置list卡片标题</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server title set\reset</code></div></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">添加新的外部服务器</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">IP</span>] [<span class="arg">名称</span>] [<span class="arg">昵称</span>]</code></div></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">设置服务器昵称</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] nickname set\reset</code></div><p class="cmd-desc">xxx</p></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">设置服务器显示IP</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] ip set\reset</code></div><p class="cmd-desc">xxx</p></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">设置屏蔽的服务器</h6><div class="cmd-row"><div class="cmd-line"><code class="path"></code></div><p class="cmd-desc">这属于已被代替的功能，目前显示列表可以直接开关，而不是使用黑名单，是否有效未测试 /server backlist add\remove [选择器]</p></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">发送控制台命令</h6><div class="cmd-row"><div class="cmd-line"><code class="path"></code></div><p class="cmd-desc">面板接入的实例才能使用 /server [选择器] console_send xxx</p></div></div>
+<div class="sub-cmd"><h6 class="sub-label-t">终端</h6><div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] terminal [<span class="arg">参数</span>]</code></div><figure><img src="../assets/bot/shots/terminal.png" alt="" loading="lazy"></figure></div></div>
+<p class="para">终端支持复杂的切割方法来查看期望的日志。具体查看如图介绍，也可以直接发送/server terminal bot会发送一张教程卡片</p>
+<h5 class="group-title">存档管理能力</h5>
+<p class="para">子命令 save / 存档</p>
+<p class="para">本功能用于直接控制存档，agent可用，但需要回复式鉴权</p>
+<p class="para">以下不在显示/server save的前缀</p>
+<p class="para">delblock [选择器] [维度] [x y z] 删除指定方块，回复原方块</p>
+<p class="para">delchunk [选择器] [维度] [x z] <strong>确认</strong>     删除指定区块 确认两个字必须打</p>
+<p class="para">list [选择器] [ 维度] [x z] 列出指定区块的所有实体</p>
+<p class="para">kill [选择器] [ 维度] [x z] [uuid] 按照uuid删除实体</p>
+<p class="para">look [选择器] [ 维度] [x z] [高度] 查看刨面图，渲染图，用于寻找方块</p>
+<p class="para">getblock [选择器] [维度] [x y z] 读取指定坐标方块</p>
+</section>
+<section class="block" id="fun"><h3 class="sec-h3">功能大全</h3>
+<p class="para">输入/help 或者 /帮助 查看帮助卡片</p>
+<div class="fun-grid">
+<article class="fun-card" id="f0"><h4 class="fun-title">主题</h4><div class="main-cmd"><span class="cm-label">主命令</span><code class="path">theme</code></div>
+<p class="para">仅群聊可用</p>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">主题</span><span class="alias">皮肤</span><span class="alias">theme</span></div>
+<p class="para">用于管理卡片的显示效果。 完全可用。</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme</code></div><p class="cmd-desc">查看主题介绍卡片</p><figure><img src="../assets/bot/shots/theme.png" alt="" loading="lazy"></figure></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme preview</code><span class="alias-group"><span class="alias">预览</span></span></div><p class="cmd-desc">查看一张预览卡片</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme &lt;主题名&gt;</code></div><p class="cmd-desc">切换主题卡片</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme upload</code><span class="alias-group"><span class="alias">上传</span><span class="alias">上传背景</span></span></div><p class="cmd-desc">为卡片设置背景图片</p></div>
+<p class="para para-quote">&gt;&gt; 使用upload,你需要此消息中直接插入图片，或者回复一张带图片的消息，并输入/theme upload来上传。为了机器人的安全运行。如果原图片被撤回则上传会被回退。感谢您的理解</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme image &lt;模糊&gt; &lt;对比度&gt; &lt;饱和度&gt;</code><span class="alias-group"><span class="alias">图片</span><span class="alias">背景</span><span class="alias">矫正</span></span></div><p class="cmd-desc">用于后处理背景图片</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/theme bgoff</code><span class="alias-group"><span class="alias">去背景</span><span class="alias">删除背景</span><span class="alias">nobg</span></span></div><p class="cmd-desc">删除背景图</p></div></article>
+<article class="fun-card" id="f1"><h4 class="fun-title">服务器</h4><div class="main-cmd"><span class="cm-label">主命令</span><code class="path">server (部分需要群管)</code></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">服务器</span><span class="alias">sr</span><span class="alias">mc</span></div>
+<p class="para">[选择器]是什么？</p>
+<p class="para">其指代程序如何识别到你期望的服务器。此处的选择器采用了模糊匹配服务器名称、IP、昵称来寻找你期望的服务器</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server list</code></div><p class="cmd-desc">-&gt; 也可以直接使用/list 查看一张完整的当前群聊服务器运行状态卡片</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server [<span class="arg">选择器</span>] list</code></div><p class="cmd-desc">查看指定服务器的玩家列表。面板服通过发送list并截取控制台探测，外部服通过slp协议探测。这是为了避免slp可能显示的匿名玩家。</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server offlist [<span class="arg">选择器</span>]</code><span class="alias-group"><span class="alias">离线列表</span><span class="alias">离线</span></span></div><p class="cmd-desc">仅支持面板服e，查看此服务器所有上线过的玩家。通过直接读取存档nbt实现</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server search [<span class="arg">mod/pack</span>]</code><span class="alias-group"><span class="alias">搜索</span></span></div><p class="cmd-desc">关键词 - [mod/pack] 可不填写，不填写则为综合</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server wiki</code></div><p class="cmd-desc">此功能已失效赞不说明</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server user [<span class="arg">正版用户名</span>]</code><span class="alias-group"><span class="alias">账户</span><span class="alias">档案</span></span></div><p class="cmd-desc">通过mojiangAPI获取账户基本信息. /server user [正版用户名] meme 以身份证的形式渲染</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server hyp [<span class="arg">正版用户名</span>]</code><span class="alias-group"><span class="alias">hypixel</span></span></div><p class="cmd-desc">获取hypixel数据</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server skin [<span class="arg">正版用户名</span>]</code><span class="alias-group"><span class="alias">皮肤</span></span></div><p class="cmd-desc">获取此用户皮肤的3D渲染图</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server skin2d [<span class="arg">正版用户名</span>]</code><span class="alias-group"><span class="alias">skinraw</span></span></div><p class="cmd-desc">获取此用户的原始2D皮肤</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server map [<span class="arg">选择器</span>] [<span class="arg">维度</span>] [<span class="arg">x z</span>] [<span class="arg">半径</span>]</code><span class="alias-group"><span class="alias">地图</span></span></div><p class="cmd-desc">仅支持从面板获取的实例服，渲染指定位置的地图，通过读取地图数据实现</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server map [<span class="arg">选择器</span>] player [<span class="arg">玩家名</span>] [<span class="arg">半径</span>]</code><span class="alias-group"><span class="alias">地图</span></span></div><p class="cmd-desc">上文的第二种形式，通过玩家定位</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server view [<span class="arg">选择器</span>] [<span class="arg">玩家</span>]</code><span class="alias-group"><span class="alias">视角</span></span></div><p class="cmd-desc">查看指定玩家视角的渲染图，无平滑光照，无方块贴图</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server view [<span class="arg">选择器</span>] at x y z yaw pitch 维度</code><span class="alias-group"><span class="alias">视角</span></span></div><p class="cmd-desc">高级模式，填入具体参数拍摄。建议使用agent代为完成</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server spark tps [<span class="arg">选择器</span>]</code></div><p class="cmd-desc">通过发送spark tps 并解析控制台来生成spark性能参数卡片。另外，此命令有其他触发方式，但无意义，不做介绍</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server tps [<span class="arg">选择器</span>] neoforge tps /forge tps /debug</code><span class="alias-group"><span class="alias">获取服务器tps,但兼容性更强。会自动尝试使用</span></span></div><p class="cmd-desc">三种方案来探测tps.在neoforge forge模式下支持分维度显示</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server debug [<span class="arg">选择器</span>]</code></div><p class="cmd-desc">通过AI分析此服务器lastest.log</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server debug [<span class="arg">选择器</span>] list</code></div><p class="cmd-desc">列出此服务器近10份日志</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server debug [<span class="arg">选择器</span>] [<span class="arg">序号</span>]</code></div><p class="cmd-desc">分析指定日志</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/server debug crash [<span class="arg">选择器</span>]</code></div><p class="cmd-desc">与上三个一致，但目标是崩溃报告</p></div></article>
+<article class="fun-card" id="f2"><h4 class="fun-title">ping</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/ping</code></div><p class="cmd-desc">ping</p></div></article>
+<article class="fun-card" id="f3"><h4 class="fun-title">查成分</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/qqinfo</code></div></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">ccf</span><span class="alias">查成分</span></div>
+<p class="para">支持直接@和qq号参数</p>
+<p class="para">查看目标的公开信息</p></article>
+<article class="fun-card" id="f4"><h4 class="fun-title">帝释天模式登入</h4><p class="para">管理你的dstmode数据</p>
+<div class="main-cmd"><span class="cm-label">主命令</span><code class="path">dst</code></div>
+<p class="para">无别名</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/dst login [<span class="arg">游戏名</span>]</code><span class="alias-group"><span class="alias">登录</span></span></div><p class="cmd-desc">手动获取登录凭据，普通用户不要使用</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/dst bind [<span class="arg">识别码</span>] [<span class="arg">游戏名</span>]</code><span class="alias-group"><span class="alias">绑定</span><span class="alias">确认</span></span></div><p class="cmd-desc">一般由启动器复制给你，黏贴发送并回复ok完成绑定</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/dst skin dst</code><span class="alias-group"><span class="alias">皮肤</span><span class="alias">换肤</span><span class="alias">换皮</span><span class="alias">上传游戏皮肤，直接在消息内嵌入皮肤，或者回复带有皮肤文件的图片并输入</span></span></div><p class="cmd-desc">skin完成上传</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/dst status</code><span class="alias-group"><span class="alias">状态</span><span class="alias">我的</span></span></div><p class="cmd-desc">查看账户信息</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/dst unbind</code><span class="alias-group"><span class="alias">解绑</span></span></div><p class="cmd-desc">解绑</p></div></article>
+<article class="fun-card" id="f5"><h4 class="fun-title">群投票</h4><div class="main-cmd"><span class="cm-label">主命令</span><code class="path">/vote</code></div>
+<div class="alias-group alias-own"><span class="cm-label">别名</span><span class="alias">投票</span><span class="alias">公投</span></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote</code></div><p class="cmd-desc">不填写参数，即为投给本轮投票的赞成。当为选择投票时，填写序号来选择。</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote kick [<span class="arg">选择器</span>] [<span class="arg">玩家名</span>]</code></div><p class="cmd-desc">踢出某个服务器的某个玩家</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote member [<span class="arg">QQ号</span>]</code><span class="alias-group"><span class="alias">群成员</span><span class="alias">踢成员</span></span></div><p class="cmd-desc">踢出群成员 需要bot有群管理</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote start [<span class="arg">选择器:面板实例</span>]</code><span class="alias-group"><span class="alias">开启</span></span></div><p class="cmd-desc">开启实例</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote stop [<span class="arg">选择器:面板实例</span>]</code><span class="alias-group"><span class="alias">关闭</span></span></div><p class="cmd-desc">关闭实例</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote mute [<span class="arg">@群成员/QQ号</span>]</code><span class="alias-group"><span class="alias">禁言</span></span></div><p class="cmd-desc">禁言群成员</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote list</code><span class="alias-group"><span class="alias">列表</span></span></div><p class="cmd-desc">查看当前公投</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote choice [<span class="arg">分钟</span>] [<span class="arg">选项一</span>] [<span class="arg">选项二</span>]</code><span class="alias-group"><span class="alias">选择</span></span></div><p class="cmd-desc">.... 进行常规投票</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/vote choice cancel</code><span class="alias-group"><span class="alias">选择</span></span></div><p class="cmd-desc">取消选择投票</p></div></article>
+<article class="fun-card" id="f6"><h4 class="fun-title">Whale</h4><p class="para">个人对话AI。基本没用</p>
+<p class="para">私聊输入/whale查看咋用</p></article>
+<article class="fun-card" id="f7"><h4 class="fun-title">QQ绑定</h4><p class="para">将qq绑定到应用上</p>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/bind list</code><span class="alias-group"><span class="alias">列表</span></span></div><p class="cmd-desc">查看已经绑定的应用</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/bind unbind [<span class="arg">序号</span>]</code><span class="alias-group"><span class="alias">解绑</span></span></div><p class="cmd-desc">解绑</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/bind nerver</code></div><p class="cmd-desc">拒绝一切绑定请求</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/bind accept</code></div><p class="cmd-desc">取消拒绝一切绑定请求</p></div></article>
+<article class="fun-card" id="f8"><h4 class="fun-title">一堆搜索类命令</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/df</code><span class="alias-group"><span class="alias">三角洲</span><span class="alias">delta</span></span></div><p class="cmd-desc">直接输入查看使用方法</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/github</code><span class="alias-group"><span class="alias">gh</span><span class="alias">仓库</span><span class="alias">cangku</span></span></div><p class="cmd-desc">直接输入查看使用方法</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/image</code><span class="alias-group"><span class="alias">图片</span><span class="alias">图</span><span class="alias">来张图</span></span></div><p class="cmd-desc">直接输入查看使用方法</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/ey</code><span class="alias-group"><span class="alias">二游</span><span class="alias">ergame</span></span></div><p class="cmd-desc">直接输入查看使用方法</p></div></article>
+<article class="fun-card" id="f9"><h4 class="fun-title">音乐</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/music search</code></div><p class="cmd-desc">搜索音乐</p></div>
+<div class="cmd-row"><div class="cmd-line"><code class="path">/music [<span class="arg">序号</span>]</code></div><p class="cmd-desc">选择音乐</p></div></article>
+<article class="fun-card" id="f10"><h4 class="fun-title">抽奖</h4><p class="para">输入/lucky 查看使用方法</p>
+<figure><img src="../assets/bot/shots/lucky.png" alt="" loading="lazy"></figure></article>
+<article class="fun-card" id="f11"><h4 class="fun-title">分析</h4><p class="para">输入/qqanlysis/群分析/群统计/qp 来分析群聊</p></article>
+<article class="fun-card" id="f12"><h4 class="fun-title">街景</h4><div class="cmd-row"><div class="cmd-line"><code class="path">/cam /街景 /实况</code></div></div>
+<p class="para">调用网络摄像头获取街景</p></article>
+</div></section>
+
+      <div class="doc-foot">
+        <a class="btn btn-ghost" href="../dpcl/index.html">← DPCL 教程</a>
+        <a class="btn btn-primary" href="../index.html">返回首页 →</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-bottom">
+      <span>DST</span>
+      <a href="#top">回到顶部</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/doc.js" defer></script>
+</body>
+</html>

@@ -168,6 +168,7 @@ body.is-ready .dock { opacity: 1; transform: translateX(-50%) translateY(0); }
 .dock-link:nth-child(1) { animation-delay: 1.15s; }
 .dock-link:nth-child(3) { animation-delay: 1.28s; }
 .dock-link:nth-child(5) { animation-delay: 1.41s; }
+.dock-link:nth-child(3) { animation-delay: 1.28s; }
 .dock-sep { opacity: 0; animation: fade-in 1s var(--ease) 1.22s forwards; }
 @keyframes dock-in {
   from { opacity: 0; transform: translateY(8px); }
