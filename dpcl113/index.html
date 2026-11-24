@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPCL & DEEPSEEK · 1.1.3</title>
+<meta name="theme-color" content="#f6f7f9">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/doc.css">
+<link rel="stylesheet" href="../css/dpcl113.css">
+<script>
+  (function () {
+    var t = localStorage.getItem('dst-theme');
+    if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body>
+<a class="skip" href="#content">跳到正文</a>
+
+<header class="nav" data-nav>
+  <div class="wrap">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 8h14M12 8v10M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span>
+      <span class="brand-name">DST</span>
+    </a>
+    <nav class="nav-links" aria-label="导航">
+      <a href="../dpcl/index.html">DPCL 教程</a>
+      <a href="../index.html" class="nav-cta">返回首页</a>
+    </nav>
+    <button class="theme-btn" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+      <span data-theme-icon></span>
+    </button>
+  </div>
+</header>
+
+<main id="content" class="post">
+  <article class="post-inner">
+
+    <header class="post-hero">
+      <p class="post-kicker"><span class="ver-pill">v1.1.3</span>版本更新</p>
+      <h1 class="post-title">DPCL <span class="amp">&amp;</span> DEEPSEEK</h1>
+    </header>
+
+    <section class="post-body">
+      <p>在最近的一次更新中，我们将DeepseekCE接入了DPCL，为其提供AI能力。</p>
+      <p>用户可以在百宝箱中找到DeepseekCE的管理面板。</p>
+      <p>DeepseekCE并非Agent，而是对话性质的桌面端应用。</p>
+      <p>DSCE需要提供DSAPIKEY进行计费，计费来自DS官方，而非DPCL所为</p>
+
+      <p class="callout-line"><strong>DS官方计费，DPCL与DSCE仅提供免费的平台</strong></p>
+
+      <h2 id="v113">Version 1.1.3</h2>
+      <ol class="change-list">
+        <li>清除了PCL的部分文案残留，修复了部分UI错误(截图收藏位置选择UI)</li>
+        <li>接入了DeepseekCE.</li>
+      </ol>
+
+      <h2 id="what">什么是DeepseekCE</h2>
+      <p>DeepseekCE是基于Chat-demo改进而来的第三方对话客户端，拥有deepseek应用的完整体验。</p>
+      <p>同时DeepseekCE支持更全面的功能，包括对话消息的编辑，提示词修改，以及在系统环境允许的情况下直接运行AI给出的CMD,Python,JS(nodejs)脚本。</p>
+      <p>在性能上，双端应用体积都在3mb以内，内存占比中本体占用始终小于10mb.WebView2框架则在70~80mb浮动。</p>
+
+      <h2 id="value">他为DPCL带来了什么</h2>
+      <p>在安装了deepseekCE后，如果在游戏启动时报错，DPCL将提供一键询问AI的按钮，你可以进一步要求AI给出CMD命令来协助修复。</p>
+      <p>例如：当游戏因ab模组冲突崩溃时，你可以直接询问AI，并在后续对话中要求AI给出一键解决的cmd命令或是python脚本，并以此修复问题。</p>
+      <p>同时，在更多地方也会支持直接询问AI。</p>
+      <p>如:一键总结群友消息，询问某个模组整合包的风评等。</p>
+    </section>
+
+    <footer class="post-foot">
+      <a class="btn btn-ghost" href="../dpcl/index.html">← DPCL 教程</a>
+      <a class="btn btn-primary" href="../index.html">返回首页 →</a>
+    </footer>
+  </article>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-bottom">
+      <span>DST</span>
+      <a href="#content">回到顶部</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/doc.js" defer></script>
+</body>
+</html>

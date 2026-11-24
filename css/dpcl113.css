@@ -1,0 +1,102 @@
+/* ============================================================
+   DPCL & DEEPSEEK · 版本更新页
+   单栏阅读式排版，复用 doc.css 的设计令牌
+   ============================================================ */
+
+.post { padding: 120px 0 40px; }
+.post-inner { width: min(100% - 48px, 760px); margin-inline: auto; }
+@media (max-width: 640px) { .post-inner { width: calc(100% - 32px); } }
+
+/* ---------- 头部 ---------- */
+.post-hero { padding-bottom: 34px; }
+.post-kicker {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.ver-pill {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: .02em;
+  color: var(--accent); background: var(--accent-soft);
+  border-radius: 999px; padding: 4px 10px;
+}
+.post-title {
+  margin-top: 22px;
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 660; letter-spacing: -.03em; line-height: 1.12;
+}
+.post-title .amp { color: var(--ink-3); font-weight: 400; padding: 0 .08em; }
+
+/* ---------- 正文 ---------- */
+.post-body { padding-top: 10px; }
+.post-body p {
+  color: var(--ink-2); font-size: 15.5px; line-height: 1.95;
+  margin-bottom: 14px;
+}
+.post-body p strong { color: var(--ink); font-weight: 600; }
+
+.post-body h2 {
+  margin: 54px 0 18px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+  font-size: clamp(19px, 2.2vw, 24px);
+  font-weight: 640; letter-spacing: -.02em;
+  scroll-margin-top: 90px;
+}
+.post-body h2::before {
+  content: ""; display: inline-block;
+  width: 3px; height: .82em; margin-right: 12px;
+  background: var(--accent); border-radius: 2px;
+  vertical-align: -.06em;
+}
+
+/* 计费声明：唯一强调块 */
+.post-body .callout-line {
+  margin: 26px 0 6px;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r-md);
+  background: var(--bg-elev);
+  font-size: 15.5px; line-height: 1.75;
+}
+.post-body .callout-line strong { font-weight: 620; }
+
+/* 更新条目 */
+.change-list {
+  margin: 6px 0 18px;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.change-list li {
+  counter-increment: step;
+  position: relative;
+  padding: 14px 0 14px 46px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-2); font-size: 15px; line-height: 1.85;
+}
+.change-list li:last-child { border-bottom: 0; }
+.change-list li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute; left: 0; top: 16px;
+  font-family: var(--mono); font-size: 11.5px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 6px; padding: 1px 7px;
+}
+
+/* ---------- 页脚 ---------- */
+.post-foot {
+  display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  margin-top: 56px; padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+
+/* 深色下的轻微对比修正 */
+html[data-theme="dark"] .post-body .callout-line { background: color-mix(in srgb, var(--bg-elev) 80%, var(--bg)); }
+
+@media (max-width: 720px) {
+  .post { padding: 100px 0 32px; }
+  .post-body p { font-size: 15px; line-height: 1.9; }
+  .post-body h2 { margin-top: 42px; }
+}
